@@ -1,0 +1,90 @@
+DrinkSkew,Item,Price,Category,Seasonality
+300,Small Espresso,2.75,Espresso Bar,Year-Round
+301,Small Macchiato,3.0,Espresso Bar,Year-Round
+302,Small Cortado,3.25,Espresso Bar,Year-Round
+303,Small Cappuccino,3.5,Espresso Bar,Year-Round
+304,Small Latte,3.75,Espresso Bar,Year-Round
+305,Medium Latte,4.0,Espresso Bar,Year-Round
+306,Large Latte,4.25,Espresso Bar,Year-Round
+307,Small Mocha,4.25,Espresso Bar,Year-Round
+308,Medium Mocha,4.5,Espresso Bar,Year-Round
+309,Large Mocha,4.75,Espresso Bar,Year-Round
+310,Small Americano,3.25,Espresso Bar,Year-Round
+311,Medium Americano,3.25,Espresso Bar,Year-Round
+312,Large Americano,3.75,Espresso Bar,Year-Round
+313,Small Drip Coffee,2.25,Brew Bar,Year-Round
+314,Medium Drip Coffee,2.5,Brew Bar,Year-Round
+315,Large Drip Coffee,2.75,Brew Bar,Year-Round
+316,Small Cold Brew,4.0,Brew Bar,Year-Round
+317,Small Premium Cold Brew,4.5,Brew Bar,Year-Round
+318,"Small Looseleaf Tea, Assorted",3.25,Specialty Bar,Year-Round
+319,Small Iced Tea Assorted,3.25,Specialty Bar,Year-Round
+320,Small Homemade Chai,4.0,Specialty Bar,Year-Round
+321,Medium Homemade Chai,4.25,Specialty Bar,Year-Round
+322,Large Homemade Chai,4.5,Specialty Bar,Year-Round
+323,Small Hot Chocolate,2.5,Specialty Bar,Year-Round
+324,Medium Hot Chocolate,2.75,Specialty Bar,Year-Round
+325,Large Hot Chocolate,3.0,Specialty Bar,Year-Round
+326,Small Steamed Milk,2.25,Specialty Bar,Year-Round
+327,Medium Steamed Milk,2.5,Specialty Bar,Year-Round
+328,Large Steamed Milk,2.75,Specialty Bar,Year-Round
+329,Small Vanilla Latte,4.0,Espresso Bar,Year-Round
+330,Medium Vanilla Latte,4.5,Espresso Bar,Year-Round
+331,Large Vanilla Latte,5.0,Espresso Bar,Year-Round
+332,Small Caramel Latte,4.25,Espresso Bar,Year-Round
+333,Medium Caramel Latte,4.75,Espresso Bar,Year-Round
+334,Large Caramel Latte,5.25,Espresso Bar,Year-Round
+335,Small Pumpkin Spice Latte,4.5,Seasonal Drinks,Fall
+336,Medium Pumpkin Spice Latte,5.0,Seasonal Drinks,Fall
+337,Large Pumpkin Spice Latte,5.5,Seasonal Drinks,Fall
+338,Small Gingerbread Latte,4.5,Seasonal Drinks,Winter
+339,Medium Gingerbread Latte,5.0,Seasonal Drinks,Winter
+340,Large Gingerbread Latte,5.5,Seasonal Drinks,Winter
+341,Small Strawberry Matcha,4.75,Seasonal Drinks,Summer
+342,Medium Strawberry Matcha,5.25,Seasonal Drinks,Summer
+343,Large Strawberry Matcha,5.75,Seasonal Drinks,Summer
+344,Small Peppermint Mocha,4.75,Seasonal Drinks,Winter
+345,Medium Peppermint Mocha,5.25,Seasonal Drinks,Winter
+346,Large Peppermint Mocha,5.75,Seasonal Drinks,Winter
+347,Small Honey Lavender Latte,4.5,Seasonal Drinks,Spring
+348,Medium Honey Lavender Latte,5.0,Seasonal Drinks,Spring
+349,Large Honey Lavender Latte,5.5,Seasonal Drinks,Spring
+350,Small Maple Spice Latte,4.5,Seasonal Drinks,Fall
+351,Medium Maple Spice Latte,5.0,Seasonal Drinks,Fall
+352,Large Maple Spice Latte,5.5,Seasonal Drinks,Fall
+353,Small Cold Brew,3.75,Seasonal Drinks,Summer
+354,Medium Cold Brew,4.25,Seasonal Drinks,Summer
+355,Large Cold Brew,4.75,Seasonal Drinks,Summer
+356,Small Chai Latte,4.0,Espresso Bar,Year-Round
+357,Medium Chai Latte,4.5,Espresso Bar,Year-Round
+358,Large Chai Latte,5.0,Espresso Bar,Year-Round
+359,Small Mocha Latte,4.25,Espresso Bar,Year-Round
+360,Medium Mocha Latte,4.75,Espresso Bar,Year-Round
+361,Large Mocha Latte,5.25,Espresso Bar,Year-Round
+362,Small Hazelnut Latte,4.25,Espresso Bar,Year-Round
+363,Medium Hazelnut Latte,4.75,Espresso Bar,Year-Round
+364,Large Hazelnut Latte,5.25,Espresso Bar,Year-Round
+365,Small Matcha Latte,4.5,Espresso Bar,Year-Round
+366,Medium Matcha Latte,5.0,Espresso Bar,Year-Round
+367,Large Matcha Latte,5.5,Espresso Bar,Year-Round
+368,Small Toasted Marshmallow Latte,4.75,Seasonal Drinks,Fall
+369,Medium Toasted Marshmallow Latte,5.25,Seasonal Drinks,Fall
+370,Large Toasted Marshmallow Latte,5.75,Seasonal Drinks,Fall
+371,Small Iced Caramel Macchiato,4.25,Seasonal Drinks,Summer
+372,Medium Iced Caramel Macchiato,4.75,Seasonal Drinks,Summer
+373,Large Iced Caramel Macchiato,5.25,Seasonal Drinks,Summer
+374,Small Coconut Latte,4.25,Seasonal Drinks,Summer
+375,Medium Coconut Latte,4.75,Seasonal Drinks,Summer
+376,Large Coconut Latte,5.25,Seasonal Drinks,Summer
+377,Small Cinnamon Roll Latte,4.75,Seasonal Drinks,Winter
+378,Medium Cinnamon Roll Latte,5.25,Seasonal Drinks,Winter
+379,Large Cinnamon Roll Latte,5.75,Seasonal Drinks,Winter
+380,Small Blackberry Mocha,4.5,Seasonal Drinks,Spring
+381,Medium Blackberry Mocha,5.0,Seasonal Drinks,Spring
+382,Large Blackberry Mocha,5.5,Seasonal Drinks,Spring
+383,Small Apple Crisp Macchiato,4.5,Seasonal Drinks,Fall
+384,Medium Apple Crisp Macchiato,5.0,Seasonal Drinks,Fall
+385,Large Apple Crisp Macchiato,5.5,Seasonal Drinks,Fall
+386,Small S’mores Latte,4.75,Seasonal Drinks,Summer
+387,Medium S’mores Latte,5.25,Seasonal Drinks,Summer
+388,Large S’mores Latte,5.75,Seasonal Drinks,Summer

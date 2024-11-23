@@ -1,0 +1,18 @@
+Category,Item,Small,Medium,Large
+Espresso Bar,Espresso,2.75,,
+Espresso Bar,Macchiato,3.0,,
+Espresso Bar,Cortado,3.25,,
+Espresso Bar,Cappuccino,3.5,,
+Espresso Bar,Latte,3.75,4.0,4.25
+Espresso Bar,Mocha,4.25,4.5,4.75
+Espresso Bar,Americano,3.25,3.25,3.75
+Brew Bar,Drip Coffee,2.25,2.5,2.75
+Brew Bar,Pour Over,,,
+Brew Bar,Premium Pour Over,,,
+Brew Bar,Cold Brew,4.0,,
+Brew Bar,Premium Cold Brew,4.5,,
+Specialty Bar,"Looseleaf Tea, Assorted",3.25,,
+Specialty Bar,Iced Tea Assorted,3.25,,
+Specialty Bar,Homemade Chai,4.0,4.25,4.5
+Specialty Bar,Hot Chocolate,2.5,2.75,3.0
+Specialty Bar,Steamed Milk,2.25,2.5,2.75
