@@ -103,10 +103,8 @@ try:
     VALUES (%s, %s, %s, %s)
     """
     file_path = os.path.join(direct, "tables/pastries_table.csv")
-    print(file_path)
     pastries = pd.read_csv(file_path, index_col=False)
     pastriesList = [tuple(row) for row in pastries.values.tolist()]
-    print(pastriesList)
     curr.executemany(pastries_insert, pastriesList)
     conn.commit()
 
