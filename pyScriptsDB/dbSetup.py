@@ -18,7 +18,8 @@ except Exception as e:
     print(f"Error creating database: {e}")
 
 # CREATING TABLES
-# MENU
+
+#1. Menu
 curr.execute("USE MyCoffeeShop;")
 try:
     menu_query = """
@@ -34,7 +35,7 @@ try:
 except Exception as e:
     print(f"Errror creating menu table: {e}")
 
-# INGREDIENTS
+#2. Ingredients
 try:
     ingredient_table = """
         CREATE TABLE Ingredients (
@@ -48,7 +49,7 @@ except Exception as e:
     print(f"Errror creating ingredient table: {e}")
 
 
-# RECIPES
+#3. Recipies
 try:
     recipe_table = """
         CREATE TABLE Recipes (
@@ -68,7 +69,7 @@ except Exception as e:
     print(f"Error recipe ingredient table: {e}")
 
 
-# books
+#4. Books
 try:
     books_table = """
     CREATE TABLE Books (
@@ -87,7 +88,7 @@ except Exception as e:
     print(f"Error creating books table: {e}")
 
 
-# drinks
+#5. Drinks
 try:
     drinks_table = """
     CREATE TABLE Drinks(
@@ -104,7 +105,7 @@ except Exception as e:
     print(f"Error creating drinks table: {e}")
 
 
-# pastries:
+#6. Pastries
 try:
     pastries_table = """
     CREATE TABLE Pastries (
@@ -119,6 +120,56 @@ try:
 except Exception as e:
     print(f"Error creating pastries table: {e}")
 
+#7. Baristas
+try:
+    barista_table = """
+    CREATE TABLE Baristas (
+    Employee_ID      INT     NOT NULL,
+    Name             VARCHAR(20),
+    Phone            VARCHAR(15),
+    PRIMARY KEY (Employee_ID)
+    );
+    """
+    curr.execute(barista_table)
+except Exception as e:
+    print(f"Error creating baristas table: {e}")
+
+
+# 8. Customer Loyalty
+try:
+    customer_table = """
+    CREATE TABLE Customer_Loyalty (
+    Loyalty_ID       INT     NOT NULL,
+    Name             VARCHAR(25),
+    Birthday         DATE,
+    Email            VARCHAR(40),
+    PRIMARY KEY (Loyalty_ID)
+    );
+    """
+    curr.execute(customer_table)
+except Exception as e:
+    print(f"Error creating CL table: {e}")
+
+
+# 9. Sales
+try:
+    sales_table = """
+            CREATE TABLE Sales (
+            Sales_ID            INT     NOT NULL,
+            Employee_ID         INT,
+            Customer_Loyalty_ID INT,
+            Sale_Date           DATE,
+            PRIMARY KEY (Sales_ID),
+            FOREIGN KEY (Employee_ID) REFERENCES Baristas(Employee_ID),
+            FOREIGN KEY (Customer_Loyalty_ID) REFERENCES Customer_Loyalty(Loyalty_ID)
+            );
+            """
+    curr.execute(sales_table)
+except Exception as e:
+    print(f"Error creating sales table: {e}")
+
+
+    
 curr.execute("SHOW TABLES;")
 print("Tables: ", curr.fetchall())
 

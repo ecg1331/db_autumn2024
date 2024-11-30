@@ -16,7 +16,7 @@ curr = conn.cursor()
 direct = os.path.dirname(os.path.abspath(__file__))
 
 # INSERTING DATA
-# Menu
+# 1. Menu
 try:
     file_path = os.path.join(direct, "tables/menu_items_table.csv")
     menu_csv = pd.read_csv(file_path, index_col=False)
@@ -32,7 +32,7 @@ except Exception as e:
     print(f"Error inserting menu data: {e}")
 
 
-# Ingredients
+# 2. Ingredients
 try:
     file_path = os.path.join(direct, "tables/ingredients_table.csv")
     ingredients = pd.read_csv(file_path, index_col=False)
@@ -47,7 +47,7 @@ try:
 except Exception as e:
     print(f"Error inserting ingredient data: {e}")
 
-# recipes
+# 3. Receipes
 try:
     file_path = os.path.join(direct, "tables/recipes_table.csv")
     recipes = pd.read_csv(file_path, index_col=False)
@@ -63,7 +63,7 @@ except Exception as e:
     print(f"Errror inserting recipes data: {e}")
 
 
-# books
+# 4. Books
 try:
     books_insert = """
     INSERT INTO Books
@@ -80,7 +80,7 @@ except Exception as e:
     print(f"Errror inserting books data: {e}")
 
 
-# drinks
+# 5. Drinks
 try:
     drink_insert = """
     INSERT INTO Drinks
@@ -96,7 +96,7 @@ except Exception as e:
     print(f"Error inserting drinks data: {e}")
 
 
-# pastries
+# 6. Pastries
 try:
     pastries_insert = """
     INSERT INTO Pastries
@@ -107,9 +107,56 @@ try:
     pastriesList = [tuple(row) for row in pastries.values.tolist()]
     curr.executemany(pastries_insert, pastriesList)
     conn.commit()
-
 except Exception as e:
     print(f"Error inserting pastry data: {e}")
+
+
+# 7. Baristas
+try:
+    barista_insert = """
+    INSERT INTO Baristas
+    VALUES (%s, %s, %s)
+    """
+    file_path = os.path.join(direct, "tables/barista_table.csv")
+    barista = pd.read_csv(file_path, index_col=False)
+    baristaList = [tuple(row) for row in barista.values.tolist()]
+    curr.executemany(barista_insert, baristaList)
+    conn.commit()
+except Exception as e:
+    print(f"Error inserting into barista table: {e}")
+
+
+# 8. Customer Loyalty
+try:
+    cl_query = """
+    INSERT INTO Customer_Loyalty
+    VALUES (%s, %s, %s, %s)
+    """
+    file_path = os.path.join(direct, "tables/CL_table.csv")
+    cl = pd.read_csv(file_path, index_col=False)
+    clList = [tuple(row) for row in cl.values.tolist()]
+    curr.executemany(cl_query, clList)
+    conn.commit()
+except Exception as e:
+    print(f"Error inserting into cl table: {e}")
+
+
+# 9. Sales
+try:
+    sales_query = """
+    INSERT INTO Sales
+    VALUES (%s, %s, %s, %s)
+    """
+    file_path = os.path.join(direct, "tables/sales_table.csv")
+    sales = pd.read_csv(file_path, index_col=False)
+    salesList = [tuple(row) for row in sales.values.tolist()]
+    curr.executemany(sales_query, salesList)
+    conn.commit()
+except Exception as e:
+    print(f"Error inserting into sales table: {e}")
+
+
+
 
 
 print("Completed")
