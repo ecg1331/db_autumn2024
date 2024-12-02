@@ -17,11 +17,8 @@
      5. **`pyScriptsDB/tables`**:
        - Contains the CSV files that populate the database (that were created in pyscriptsTables)
 
-  - We will still need customer and barista tables, as well as allergens and the purchase table. 
-  These will be randomly generated (?) so anyone can make those.
+  - generated customer, barista and sales tables on 11/30.
+ 
   
-  - Some of the tables (like ingredients) dont have everything we listed on the ER, but that was a lower priorty for me bc that can just be changed later.
-
-  Lmk if u have questions!
 
 
