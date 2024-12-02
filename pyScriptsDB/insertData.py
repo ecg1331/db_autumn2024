@@ -156,6 +156,34 @@ except Exception as e:
     print(f"Error inserting into sales table: {e}")
 
 
+# 10. Skew
+try:
+    skew_query = """
+    INSERT INTO Skews
+    VALUES (%s)
+    """
+    file_path = os.path.join(direct, "tables/skews_table.csv")
+    skew = pd.read_csv(file_path, index_col=False)
+    skewList = [tuple(row) for row in skew.values.tolist()]
+    curr.executemany(skew_query, skewList)
+    conn.commit()
+except Exception as e:
+    print(f"Error inserting into skew table: {e}")
+
+
+# 12. Sales Item
+try:
+    sales_item_query = """
+    INSERT INTO Sales_Item
+    VALUES (%s, %s, %s)
+    """
+    file_path = os.path.join(direct, "tables/sales_item_table.csv")
+    sales_item = pd.read_csv(file_path, index_col=False)
+    siList = [tuple(row) for row in sales_item.values.tolist()]
+    curr.executemany(sales_item_query, siList)
+    conn.commit()
+except Exception as e:
+    print(f"Error inserting into sales item table: {e}")
 
 
 

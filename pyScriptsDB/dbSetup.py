@@ -155,11 +155,11 @@ except Exception as e:
 try:
     sales_table = """
             CREATE TABLE Sales (
-            Sales_ID            INT     NOT NULL,
+            Sale_ID            INT     NOT NULL,
             Employee_ID         INT,
             Customer_Loyalty_ID INT,
             Sale_Date           DATE,
-            PRIMARY KEY (Sales_ID),
+            PRIMARY KEY (Sale_ID),
             FOREIGN KEY (Employee_ID) REFERENCES Baristas(Employee_ID),
             FOREIGN KEY (Customer_Loyalty_ID) REFERENCES Customer_Loyalty(Loyalty_ID)
             );
@@ -167,6 +167,36 @@ try:
     curr.execute(sales_table)
 except Exception as e:
     print(f"Error creating sales table: {e}")
+
+
+# 10. Skews Table
+try:
+    skew_table = """
+            CREATE TABLE Skews(
+            Skew     VARCHAR(10)      NOT NULL,
+            PRIMARY KEY (Skew)
+            );
+            """
+    curr.execute(skew_table)
+except Exception as e:
+    print(f"Error creating skew table: {e}")
+
+
+# 11. Sales Item
+try:
+    sales_item = """
+            CREATE TABLE Sales_Item(
+            Sale_ID     INT      NOT NULL,
+            Item        VARCHAR(11),
+            Quantity    INT,
+            PRIMARY KEY (Sale_ID, Item),
+            FOREIGN KEY (Sale_ID) REFERENCES Sales(Sale_ID),
+            FOREIGN KEY (Item) REFERENCES Skews(Skew)
+            );
+            """
+    curr.execute(sales_item)
+except Exception as e:
+    print(f"Error creating sales item table: {e}")
 
 
     
