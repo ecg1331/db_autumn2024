@@ -65,7 +65,6 @@ print(curr.fetchall())
 print("-"*50)
 
 
-
 # books with fantasy genre
 query4 = """
 SELECT Title
@@ -84,6 +83,17 @@ FROM Drinks
 WHERE Season = 'Fall';
 """
 curr.execute(query5)
+print(curr.fetchall())
+print("-"*50)
+
+
+# vegan pastries (can do this instead of allergens)
+query6 = """
+SELECT PastryName
+FROM Pastries
+WHERE PastryName LIKE 'vegan%';
+"""
+curr.execute(query6)
 print(curr.fetchall())
 print("-"*50)
 
