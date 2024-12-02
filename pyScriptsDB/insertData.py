@@ -14,7 +14,6 @@ curr = conn.cursor()
 
 
 direct = os.path.dirname(os.path.abspath(__file__))
-
 # INSERTING DATA
 # 1. Menu
 try:
