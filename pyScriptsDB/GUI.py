@@ -94,6 +94,14 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         button.SetPosition((100, 144))
         # vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
 
+        button_fantasy = wx.Button(self.pnl, label="Run Query")
+        button_fantasy.Bind(wx.EVT_BUTTON, self.button_click_fantasy_books)
+        button_fantasy.SetPosition((100, 237))
+
+        button_ingredient= wx.Button(self.pnl, label="Run Query")
+        button_ingredient.Bind(wx.EVT_BUTTON, self.button_click_ingredient)
+        button_ingredient.SetPosition((415, 237))
+
         # self.pnl.SetSizer(vbox)
 
         self.Layout()
@@ -164,6 +172,81 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
             vbox.Add(text, proportion=1, flag=wx.EXPAND | wx.ALL, border=20)
             query_pnl.SetSizer(vbox)
 
+
+            query_frame.Centre()
+            query_frame.Show()
+        
+        except Exception as e:
+            print(f"error {e}")
+    
+
+    def button_click_fantasy_books(self, event):
+        '''
+        runs query for fantasy books
+        '''
+
+        try:
+            query = """
+            SELECT B.Title
+            FROM Books as B
+            JOIN Skews AS S ON S.Skew = B.ISBN
+            JOIN Sales_Item AS SI on SI.Item = S.Skew
+            JOIN Sales AS SAL on SAL.Sale_ID = SI.Sale_ID
+            WHERE B. Genre = 'Fantasy' AND YEAR(SAL.Sale_Date) = 2023;
+            """
+            self.curr.execute(query)
+            result = (self.curr.fetchall())
+
+            query_frame = wx.Frame(self, title="Fantasy Books Bought in 2023:", size=(400, 300))
+            query_pnl = wx.Panel(query_frame)
+            vbox = wx.BoxSizer(wx.VERTICAL)
+
+            text = wx.TextCtrl(query_pnl, style=wx.TE_MULTILINE | wx.TE_READONLY)
+
+            for row in result:
+                book = row[0]
+                text.AppendText(f"{book}\n")
+
+            vbox.Add(text, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            query_pnl.SetSizer(vbox)
+
+            query_frame.Centre()
+            query_frame.Show()
+        
+        except Exception as e:
+            print(f"error {e}")
+    
+    def button_click_ingredient(self, event):
+        '''
+        runs query for dietary pastries (can be used in place of allergens table)
+        '''
+
+        try:
+            query = """
+            SELECT M.ItemName, COUNT(I.IngredientName) AS IngredientCount
+            FROM Recipes AS R
+            JOIN Menu AS M ON R.MenuItemSkew = M.MenuItemSkew
+            JOIN Ingredients AS I ON R.IngredientSkew = I.IngredientSkew
+            GROUP BY M.ItemName
+            ORDER BY M.ItemName;
+            """
+
+            self.curr.execute(query)
+            result = (self.curr.fetchall())
+
+            query_frame = wx.Frame(self, title="Number of Ingredients in Each Menu Item:", size=(400, 300))
+            query_pnl = wx.Panel(query_frame)
+            vbox = wx.BoxSizer(wx.VERTICAL)
+
+            text = wx.TextCtrl(query_pnl, style=wx.TE_MULTILINE | wx.TE_READONLY)
+
+            for row in result:
+                name = row[0]
+                count = row[1]
+                text.AppendText(f"{name}: {count}\n")
+
+            vbox.Add(text, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            query_pnl.SetSizer(vbox)
 
             query_frame.Centre()
             query_frame.Show()

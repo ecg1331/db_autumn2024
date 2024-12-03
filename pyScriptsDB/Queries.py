@@ -98,5 +98,23 @@ print(curr.fetchall())
 print("-"*50)
 
 
+# fantasy books bought in 2023
+query7 = """
+SELECT B.Title, B.Genre
+FROM Books as B
+JOIN Skews AS S ON S.Skew = B.ISBN
+JOIN Sales_Item AS SI on SI.Item = S.Skew
+JOIN Sales AS SAL on SAL.Sale_ID = SI.Sale_ID
+WHERE B. Genre = 'Fantasy' AND YEAR(SAL.Sale_Date) = 2023;
+"""
+curr.execute(query7)
+print(curr.fetchall())
+print("-"*50)
+
+# month with the most sales
+query8 = """
+SELECT MONTH(Sale_Date)"""
+
+
 curr.close()
 conn.close()
