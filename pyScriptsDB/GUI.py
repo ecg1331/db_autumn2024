@@ -1,12 +1,17 @@
 import wx
 import mysql.connector
 
+# need to create more images for queries
+# create query map
+
+
 class DBInterface(wx.Frame): # dbinterface extends wx.frame
 
     def __init__(self):
         #Frame() Frame(parent, id=ID_ANY, title=EmptyString, pos=DefaultPosition, size=DefaultSize, style=DEFAULT_FRAME_STYLE, name=FrameNameStr)
         super(DBInterface, self).__init__(None, title="Coffee Shop", size=(600, 600))
 
+        # not sure about this here
         self.conn = None
         self.curr = None
 
@@ -20,23 +25,17 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         except Exception as e:
             print(f"Failed to connect: {e}")
 
-        pnl = wx.Panel(self)
-        vbox = wx.BoxSizer(wx.VERTICAL) # this will put buttons vert
+        self.pnl = wx.Panel(self)
 
-        # eventually can make a button func within the class that will control all these but
-        button = wx.Button(pnl, label="Run Vegan Chicken Baugette Query")
-        button.Bind(wx.EVT_BUTTON, self.button_click_baguette) # this is what creates the 'event' for the button to run on click
-        vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
+        self.welcome_screen("imgs/logo.png")
 
-        button = wx.Button(pnl, label="Run Vegan Pastry")
-        button.Bind(wx.EVT_BUTTON, self.button_click_pastry)
-        vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
-
-        pnl.SetSizer(vbox)
     
     def button_click_baguette(self, event):
+        '''
+        runs query for vegan chicken baguette
+        '''
+
         try:
-            button = event.GetEventObject()
         
             query = """
             SELECT M.ItemName, I.IngredientName
@@ -66,8 +65,68 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         
         except Exception as e:
             print(f"error {e}")
+    
+    def welcome_screen(self, imgPath):
+
+        '''loads welcome image and screen'''
+
+        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper(imgPath))
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        main_sizer.Add(self.bg_bitmap, 1, wx.ALIGN_CENTER, border=40)
+
+        self.pnl.SetSizer(main_sizer)
+        self.pnl.Layout()
+        self.Centre()
+
+        # binding to mouse event bc of img - cant make button transparent
+        self.bg_bitmap.Bind(wx.EVT_LEFT_DOWN, self.enter)
+
+
+    def enter(self, event):
+        '''
+        enters to query menu upon mouse event
+        '''
+
+        mX, mY= event.GetPosition()
+
+        # will change when the panel grows after development
+        mX_start, mX_end = 166, 347
+        mY_start, mY_end = 451, 469
+
+        # for debugging
+        if (mX_start <= mX <= mX_end and
+            mY_start <= mY <= mY_end):
+            print('enter')
+        else:
+            print(f"{mX, mY}")
+        
+        # testing
+        self.pnl.Destroy()
+        self.pnl = wx.Panel(self)
+
+        # buttons
+        vbox = wx.BoxSizer(wx.VERTICAL) # this will put buttons vert
+
+        # eventually can make a button func within the class that will control all these but
+        button = wx.Button(self.pnl, label="Run Vegan Chicken Baugette Query")
+        button.Bind(wx.EVT_BUTTON, self.button_click_baguette) # this is what creates the 'event' for the button to run on click
+        vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
+
+        button = wx.Button(self.pnl, label="Run Vegan Pastry")
+        button.Bind(wx.EVT_BUTTON, self.button_click_pastry)
+        vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
+
+        self.pnl.SetSizer(vbox)
+
+        self.Layout()
+
 
     def button_click_pastry(self, event):
+        '''
+        runs query for dietary pastries (can be used in place of allergens table)
+        '''
+
         try:
             button = event.GetEventObject()
         
@@ -97,6 +156,14 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         
         except Exception as e:
             print(f"error {e}")
+
+    def image_helper(self, imgPath):
+        '''
+        helps load images - will add more images.
+        '''
+        
+        img = wx.Image(imgPath, wx.BITMAP_TYPE_PNG)
+        return wx.Bitmap(img)
 
 
 if __name__ == "__main__":
