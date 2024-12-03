@@ -29,6 +29,110 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
 
         self.welcome_screen("imgs/logo.png")
 
+
+    def welcome_screen(self, imgPath):
+
+        '''loads welcome image and screen'''
+
+        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper(imgPath))
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        main_sizer.Add(self.bg_bitmap, 1, wx.ALIGN_CENTER, border=40)
+
+        self.pnl.SetSizer(main_sizer)
+        self.pnl.Layout()
+        self.Centre()
+
+        # binding to mouse event bc of img - cant make button transparent
+        self.bg_bitmap.Bind(wx.EVT_LEFT_DOWN, self.home_screen)
+
+
+    def home_screen(self, event):
+        '''
+        enters to query menu upon mouse event
+        '''
+
+        # mX, mY = event.GetPosition()
+        # mX, mY= event.GetPosition()
+
+        # # will change when the panel grows after development
+        # mX_start, mX_end = 166, 347
+        # mY_start, mY_end = 451, 469
+
+        # for debugging
+        # if (mX_start <= mX <= mX_end and
+        #     mY_start <= mY <= mY_end):
+        #     print('enter')
+        # else:
+        # print(f"{mX, mY}")
+
+        event.Skip(False)
+
+        # testing
+        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper("imgs/homescreen.png"))
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        main_sizer.Add(self.bg_bitmap, 1, wx.ALIGN_CENTER, border=20)
+
+        self.pnl.SetSizer(main_sizer)
+        self.pnl.Layout()
+        self.Centre()
+
+
+
+        # buttons
+        # vbox = wx.BoxSizer(wx.VERTICAL) # this will put buttons vert
+
+        # eventually can make a button func within the class that will control all these but
+        button_VB = wx.Button(self.pnl, label="Run Query")
+        button_VB.SetPosition((415, 144))
+        button_VB.Bind(wx.EVT_BUTTON, self.button_click_baguette) # this is what creates the 'event' for the button to run on click
+        # vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
+
+        button = wx.Button(self.pnl, label="Run Query")
+        button.Bind(wx.EVT_BUTTON, self.button_click_pastry)
+        button.SetPosition((100, 144))
+        # vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
+
+        # self.pnl.SetSizer(vbox)
+
+        self.Layout()
+
+
+    def button_click_pastry(self, event):
+        '''
+        runs query for dietary pastries (can be used in place of allergens table)
+        '''
+
+        try:
+            query = """
+            SELECT PastryName
+            FROM Pastries
+            WHERE PastryName LIKE 'Gluten-Free%';
+            """
+
+            self.curr.execute(query)
+            result = (self.curr.fetchall())
+
+            query_frame = wx.Frame(self, title="Gluten Free Pastries:", size=(400, 300))
+            query_pnl = wx.Panel(query_frame)
+            vbox = wx.BoxSizer(wx.VERTICAL)
+
+            text = wx.TextCtrl(query_pnl, style=wx.TE_MULTILINE | wx.TE_READONLY)
+
+            for row in result:
+                pastry = row[0]
+                text.AppendText(f"{pastry}\n")
+
+            vbox.Add(text, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            query_pnl.SetSizer(vbox)
+
+            query_frame.Centre()
+            query_frame.Show()
+        
+        except Exception as e:
+            print(f"error {e}")
+    
     
     def button_click_baguette(self, event):
         '''
@@ -36,7 +140,6 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         '''
 
         try:
-        
             query = """
             SELECT M.ItemName, I.IngredientName
             FROM Recipes as R
@@ -58,104 +161,16 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
                 ingredient = row[1]
                 text.AppendText(f"{ingredient}\n")
 
-            vbox.Add(text, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            vbox.Add(text, proportion=1, flag=wx.EXPAND | wx.ALL, border=20)
             query_pnl.SetSizer(vbox)
 
+
+            query_frame.Centre()
             query_frame.Show()
         
         except Exception as e:
             print(f"error {e}")
     
-    def welcome_screen(self, imgPath):
-
-        '''loads welcome image and screen'''
-
-        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper(imgPath))
-        main_sizer = wx.BoxSizer(wx.VERTICAL)
-
-        main_sizer.Add(self.bg_bitmap, 1, wx.ALIGN_CENTER, border=40)
-
-        self.pnl.SetSizer(main_sizer)
-        self.pnl.Layout()
-        self.Centre()
-
-        # binding to mouse event bc of img - cant make button transparent
-        self.bg_bitmap.Bind(wx.EVT_LEFT_DOWN, self.enter)
-
-
-    def enter(self, event):
-        '''
-        enters to query menu upon mouse event
-        '''
-
-        mX, mY= event.GetPosition()
-
-        # will change when the panel grows after development
-        mX_start, mX_end = 166, 347
-        mY_start, mY_end = 451, 469
-
-        # for debugging
-        if (mX_start <= mX <= mX_end and
-            mY_start <= mY <= mY_end):
-            print('enter')
-        else:
-            print(f"{mX, mY}")
-        
-        # testing
-        self.pnl.Destroy()
-        self.pnl = wx.Panel(self)
-
-        # buttons
-        vbox = wx.BoxSizer(wx.VERTICAL) # this will put buttons vert
-
-        # eventually can make a button func within the class that will control all these but
-        button = wx.Button(self.pnl, label="Run Vegan Chicken Baugette Query")
-        button.Bind(wx.EVT_BUTTON, self.button_click_baguette) # this is what creates the 'event' for the button to run on click
-        vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
-
-        button = wx.Button(self.pnl, label="Run Vegan Pastry")
-        button.Bind(wx.EVT_BUTTON, self.button_click_pastry)
-        vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
-
-        self.pnl.SetSizer(vbox)
-
-        self.Layout()
-
-
-    def button_click_pastry(self, event):
-        '''
-        runs query for dietary pastries (can be used in place of allergens table)
-        '''
-
-        try:
-            button = event.GetEventObject()
-        
-            query = """
-            SELECT PastryName
-            FROM Pastries
-            WHERE PastryName LIKE 'vegan%';
-            """
-
-            self.curr.execute(query)
-            result = (self.curr.fetchall())
-
-            query_frame = wx.Frame(self, title="Vegan Pastries:", size=(400, 300))
-            query_pnl = wx.Panel(query_frame)
-            vbox = wx.BoxSizer(wx.VERTICAL)
-
-            text = wx.TextCtrl(query_pnl, style=wx.TE_MULTILINE | wx.TE_READONLY)
-
-            for row in result:
-                pastry = row[0]
-                text.AppendText(f"{pastry}\n")
-
-            vbox.Add(text, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
-            query_pnl.SetSizer(vbox)
-
-            query_frame.Show()
-        
-        except Exception as e:
-            print(f"error {e}")
 
     def image_helper(self, imgPath):
         '''
