@@ -4,7 +4,6 @@ import mysql.connector
 # need to create more images for queries
 # create query map
 
-
 class DBInterface(wx.Frame): # dbinterface extends wx.frame
 
     def __init__(self):
@@ -22,39 +21,6 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         self.pnl = wx.Panel(self)
         self.welcome_screen("imgs/logoLarge.png")
 
-        
-    def connect_to_db(self):
-        '''
-        connects to database
-        '''
-
-        try:
-            self.conn = mysql.connector.connect(user = 'root',
-                                password = ' ',
-                                host = 'localhost',
-                                database = 'MyCoffeeShop'
-                                )
-            self.curr = self.conn.cursor()
-        except Exception as e:
-            print(f"Failed to connect: {e}")
-
-
-    def welcome_screen(self, imgPath):
-        '''
-        loads welcome image and screen
-        '''
-
-        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper(imgPath))
-        main_sizer = wx.BoxSizer(wx.VERTICAL)
-
-        main_sizer.Add(self.bg_bitmap, 1, wx.ALIGN_CENTER, border=20)
-
-        self.pnl.SetSizer(main_sizer)
-        self.pnl.Layout()
-        self.Centre()
-
-        # binding to mouse event bc of img - cant make button transparent
-        self.bg_bitmap.Bind(wx.EVT_LEFT_DOWN, self.home_screen)
 
 
     def home_screen(self, event):
@@ -62,78 +28,90 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         enters to query menu upon mouse event
         '''
 
-        # mX, mY = event.GetPosition()
-        # mX, mY= event.GetPosition()
+        mX, mY = event.GetPosition()
+        print(f"{mX, mY}")
 
-        # # will change when the panel grows after development
-        # mX_start, mX_end = 166, 347
-        # mY_start, mY_end = 451, 469
-
-        # for debugging
-        # if (mX_start <= mX <= mX_end and
-        #     mY_start <= mY <= mY_end):
-        #     print('enter')
-        # else:
-        # print(f"{mX, mY}")
 
         event.Skip(False)
-        self.pnl.Destroy() # destroy old panel
+        self.pnl.Destroy()        # destroy old panel
         self.pnl = wx.Panel(self) # create new one
+        self.pnl = wx.Panel(self, size=(850, 750))
 
-        # testing
-        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper("imgs/hs2.png"))
+        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper("/Users/emma/Desktop/Orange Vintage Coffee Shop Logo.png"))
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        main_sizer.Add(self.bg_bitmap, 3, wx.ALIGN_CENTER, border=20)
+        main_sizer.Add(self.bg_bitmap, 1, wx.ALIGN_CENTER, border=5)
 
+        # Button panel
+        button_panel = wx.Panel(self.pnl, size=(700, 475))
+        button_panel.SetPosition((72, 90))
+        button_panel.SetBackgroundColour(wx.Colour(240, 240, 240))  # just for testing
+
+        # layout of buttons with the panel
+        button_layout = wx.GridSizer(5, 2, 10, 10)
+
+        button1 = self.create_button(button_panel, "Name of Ingredients in Vegan Chicken Baguette", "Run Query", self.button_click_baguette)
+        button_layout.Add(button1, 0, wx.EXPAND | wx.ALL, border=5)
+
+        button2 = self.create_button(button_panel, "Name of Gluten Free Pastries", "Run Query", self.button_click_pastry)
+        button_layout.Add(button2, 0, wx.EXPAND | wx.ALL, border=5)
+
+        button3 = self.create_button(button_panel, "Fantasy Books sold in 2023", "Run Query", self.button_click_fantasy_books)
+        button_layout.Add(button3, 0, wx.EXPAND | wx.ALL, border=5)
+
+        button4 = self.create_button(button_panel, "Count of Number of Ingredients Per Item", "Run Query", self.button_click_ingredient)
+        button_layout.Add(button4, 0, wx.EXPAND | wx.ALL, border=5)
+
+        # Set the sizer for button_panel
+        button_panel.SetSizer(button_layout)  # Attach the sizer to button_panel
+        button_panel.Layout() 
+
+        # self.pnl.Refresh()
+
+        # Finalize the layout
         self.pnl.SetSizer(main_sizer)
         self.pnl.Layout()
         self.Centre()
 
-        self.create_query_panel("List ingredients in Vegan Chicken Baguette", self.button_click_baguette, (100,100))
-        
-        # # cant get buttons working with panels.
-        # # eventually can make a button func within the class that will control all these but
-        # button_VB = wx.Button(self.pnl, label="Run Query")
-        # button_VB.SetPosition((415, 144))
-        # button_VB.Bind(wx.EVT_BUTTON, self.button_click_baguette) # this is what creates the 'event' for the button to run on click
 
-        # button = wx.Button(self.pnl, label="Run Query")
-        # button.Bind(wx.EVT_BUTTON, self.button_click_pastry)
-        # button.SetPosition((100, 144))
-        # # vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
 
-        # button_fantasy = wx.Button(self.pnl, label="Run Query")
-        # button_fantasy.Bind(wx.EVT_BUTTON, self.button_click_fantasy_books)
-        # button_fantasy.SetPosition((100, 237))
 
-        # button_ingredient= wx.Button(self.pnl, label="Run Query")
-        # button_ingredient.Bind(wx.EVT_BUTTON, self.button_click_ingredient)
-        # button_ingredient.SetPosition((415, 237))
 
-        self.pnl.SetSizer(main_sizer)
-        self.Layout()
 
-    def create_query_panel(self, text, handler, pos):
+
+
+
+    
+       
+       
+
+
+
+
+    def create_button(self, button_panel, label_text, button_label, button_handler):
         '''
-        Creates a tiny panel with text and a button at the given position.
+        Creates the button
         '''
 
-        query_panel = wx.Panel(self.pnl, size=(200, 200), pos=pos)
+        # Create label and button
+        # if len(label_text) < 30:
+        #     print(label_text)
+        #     label_text += "\n"
+        #     print(len(label_text))
 
-        layout = wx.BoxSizer(wx.VERTICAL)
+        label = wx.StaticText(button_panel, label=label_text)
+        # label.Wrap(200)
+        button = wx.Button(button_panel, label=button_label, size = (100, 30))
+        button.Bind(wx.EVT_BUTTON, button_handler)
 
-        label = wx.StaticText(query_panel, label=text)
-        label.Wrap(170) 
-        layout.Add(label, 0, wx.ALIGN_CENTER | wx.TOP, 10)
+        # Create vertical sizer to stack label and button
+        label_button = wx.BoxSizer(wx.VERTICAL)
+        label_button.Add(label, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, border= 10)
+        label_button.Add(button, 0, wx.ALIGN_CENTER, border= 10)
 
-        button = wx.Button(query_panel, label="Run Query")
-        button.Bind(wx.EVT_BUTTON, handler)
-        layout.Add(button, 0, wx.ALIGN_CENTER | wx.TOP, 10)
+        return label_button
+    
 
-
-        query_panel.SetSizer(layout)
-        query_panel.Layout()
 
     def button_click_pastry(self, event):
         '''
@@ -244,6 +222,7 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         except Exception as e:
             print(f"error {e}")
     
+
     def button_click_ingredient(self, event):
         '''
         runs query for dietary pastries (can be used in place of allergens table)
@@ -291,7 +270,39 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         img = wx.Image(imgPath, wx.BITMAP_TYPE_PNG)
         return wx.Bitmap(img)
     
+    def connect_to_db(self):
+        '''
+        connects to database
+        '''
 
+        try:
+            self.conn = mysql.connector.connect(user = 'root',
+                                password = ' ',
+                                host = 'localhost',
+                                database = 'MyCoffeeShop'
+                                )
+            self.curr = self.conn.cursor()
+        except Exception as e:
+            print(f"Failed to connect: {e}")
+
+
+    def welcome_screen(self, imgPath):
+        '''
+        loads welcome image and screen
+        '''
+
+        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper(imgPath))
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        main_sizer.Add(self.bg_bitmap, 1, wx.ALIGN_CENTER, border=20)
+
+        self.pnl.SetSizer(main_sizer)
+        self.pnl.Layout()
+        self.Centre()
+
+        # binding to mouse event bc of img - cant make button transparent
+        self.bg_bitmap.Bind(wx.EVT_LEFT_DOWN, self.home_screen)
+    
 
 if __name__ == "__main__":
     app = wx.App()
