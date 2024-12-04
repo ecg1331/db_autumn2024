@@ -13,6 +13,8 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         # attributes
         self.conn = None
         self.curr = None
+        self.orange = wx.Colour(217, 89, 58) # orange color
+        self.font = wx.Font(16, wx.BOLD, wx.NORMAL, wx.NORMAL, False, "Roboto Mini")
 
         # connecting
         self.connect_to_db()
@@ -37,7 +39,7 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         self.pnl = wx.Panel(self) # create new one
         self.pnl = wx.Panel(self, size=(850, 750))
 
-        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper("/Users/emma/Desktop/Orange Vintage Coffee Shop Logo.png"))
+        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper("imgs/hs2.png"))
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         main_sizer.Add(self.bg_bitmap, 1, wx.ALIGN_CENTER, border=5)
@@ -45,28 +47,25 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         # Button panel
         button_panel = wx.Panel(self.pnl, size=(700, 475))
         button_panel.SetPosition((72, 90))
-        button_panel.SetBackgroundColour(wx.Colour(240, 240, 240))  # just for testing
+        button_panel.SetBackgroundColour(wx.Colour(247, 247, 244))
 
         # layout of buttons with the panel
-        button_layout = wx.GridSizer(5, 2, 10, 10)
+        button_layout = wx.FlexGridSizer(2, 2, 10, 10)
 
         button1 = self.create_button(button_panel, "Name of Ingredients in Vegan Chicken Baguette", "Run Query", self.button_click_baguette)
-        button_layout.Add(button1, 0, wx.EXPAND | wx.ALL, border=5)
+        button_layout.Add(button1, 0, wx.ALIGN_CENTER  | wx.ALL, border=5)
 
         button2 = self.create_button(button_panel, "Name of Gluten Free Pastries", "Run Query", self.button_click_pastry)
-        button_layout.Add(button2, 0, wx.EXPAND | wx.ALL, border=5)
+        button_layout.Add(button2, 0, wx.ALIGN_CENTER | wx.ALL, border=5)
 
         button3 = self.create_button(button_panel, "Fantasy Books sold in 2023", "Run Query", self.button_click_fantasy_books)
-        button_layout.Add(button3, 0, wx.EXPAND | wx.ALL, border=5)
+        button_layout.Add(button3, 0, wx.ALIGN_CENTER | wx.ALL, border=5)
 
         button4 = self.create_button(button_panel, "Count of Number of Ingredients Per Item", "Run Query", self.button_click_ingredient)
-        button_layout.Add(button4, 0, wx.EXPAND | wx.ALL, border=5)
+        button_layout.Add(button4, 0, wx.ALIGN_CENTER | wx.ALL, border=5)
 
-        # Set the sizer for button_panel
-        button_panel.SetSizer(button_layout)  # Attach the sizer to button_panel
+        button_panel.SetSizer(button_layout) 
         button_panel.Layout() 
-
-        # self.pnl.Refresh()
 
         # Finalize the layout
         self.pnl.SetSizer(main_sizer)
@@ -76,37 +75,20 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
 
 
 
-
-
-
-
-
-    
-       
-       
-
-
-
-
     def create_button(self, button_panel, label_text, button_label, button_handler):
         '''
         Creates the button
         '''
 
-        # Create label and button
-        # if len(label_text) < 30:
-        #     print(label_text)
-        #     label_text += "\n"
-        #     print(len(label_text))
-
         label = wx.StaticText(button_panel, label=label_text)
-        # label.Wrap(200)
+        label.SetForegroundColour(wx.Colour(180, 60, 58)) # has to be darker
+        label.SetFont(self.font)
+
         button = wx.Button(button_panel, label=button_label, size = (100, 30))
         button.Bind(wx.EVT_BUTTON, button_handler)
 
-        # Create vertical sizer to stack label and button
         label_button = wx.BoxSizer(wx.VERTICAL)
-        label_button.Add(label, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, border= 10)
+        label_button.Add(label, 0, wx.EXPAND | wx.ALL, border=5)
         label_button.Add(button, 0, wx.ALIGN_CENTER, border= 10)
 
         return label_button
@@ -130,6 +112,7 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
 
             query_frame = wx.Frame(self, title="Gluten Free Pastries:", size=(400, 300))
             query_pnl = wx.Panel(query_frame)
+            query_pnl.SetBackgroundColour(self.orange)
             vbox = wx.BoxSizer(wx.VERTICAL)
 
             text = wx.TextCtrl(query_pnl, style=wx.TE_MULTILINE | wx.TE_READONLY)
@@ -138,7 +121,7 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
                 pastry = row[0]
                 text.AppendText(f"{pastry}\n")
 
-            vbox.Add(text, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+            vbox.Add(text, proportion=2, flag=wx.EXPAND | wx.ALL, border=10)
             query_pnl.SetSizer(vbox)
 
             query_frame.Centre()
@@ -167,6 +150,7 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
 
             query_frame = wx.Frame(self, title="Ingredients in Vegan Chicken Baguette", size=(400, 300))
             query_pnl = wx.Panel(query_frame)
+            query_pnl.SetBackgroundColour(self.orange)
             vbox = wx.BoxSizer(wx.VERTICAL)
 
             text = wx.TextCtrl(query_pnl, style=wx.TE_MULTILINE | wx.TE_READONLY)
@@ -175,7 +159,7 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
                 ingredient = row[1]
                 text.AppendText(f"{ingredient}\n")
 
-            vbox.Add(text, proportion=1, flag=wx.EXPAND | wx.ALL, border=20)
+            vbox.Add(text, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
             query_pnl.SetSizer(vbox)
 
 
@@ -205,6 +189,7 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
 
             query_frame = wx.Frame(self, title="Fantasy Books Bought in 2023:", size=(400, 300))
             query_pnl = wx.Panel(query_frame)
+            query_pnl.SetBackgroundColour(self.orange)
             vbox = wx.BoxSizer(wx.VERTICAL)
 
             text = wx.TextCtrl(query_pnl, style=wx.TE_MULTILINE | wx.TE_READONLY)
@@ -243,6 +228,7 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
 
             query_frame = wx.Frame(self, title="Number of Ingredients in Each Menu Item:", size=(400, 300))
             query_pnl = wx.Panel(query_frame)
+            query_pnl.SetBackgroundColour(wx.Colour(217, 89, 58))
             vbox = wx.BoxSizer(wx.VERTICAL)
 
             text = wx.TextCtrl(query_pnl, style=wx.TE_MULTILINE | wx.TE_READONLY)
