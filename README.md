@@ -14,7 +14,8 @@
      2. **`insertData.py`**: Inserts data into the tables.
      3. **`Queries.py`**: Runs our queries.
      4. **`dbTeardown.py`**: Cleans up the database (drops tables and the database).
-     5. **`pyScriptsDB/tables`**:
+     5. 4. **`GUI.py`**: what ive done of the GUI. needs more complicated queries. Also if some could allow users to select attributes that would great
+     6. **`pyScriptsDB/tables`**:
        - Contains the CSV files that populate the database (that were created in pyscriptsTables)
 
   - generated customer, barista and sales tables on 11/30.
