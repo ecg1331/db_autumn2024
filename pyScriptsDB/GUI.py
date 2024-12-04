@@ -9,11 +9,24 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
 
     def __init__(self):
         #Frame() Frame(parent, id=ID_ANY, title=EmptyString, pos=DefaultPosition, size=DefaultSize, style=DEFAULT_FRAME_STYLE, name=FrameNameStr)
-        super(DBInterface, self).__init__(None, title="Coffee Shop", size=(600, 600))
+        super(DBInterface, self).__init__(None, title="Coffee Shop", size=(850, 750))
 
-        # not sure about this here
+        # attributes
         self.conn = None
         self.curr = None
+
+        # connecting
+        self.connect_to_db()
+
+        # panel
+        self.pnl = wx.Panel(self)
+        self.welcome_screen("imgs/logoLarge.png")
+
+        
+    def connect_to_db(self):
+        '''
+        connects to database
+        '''
 
         try:
             self.conn = mysql.connector.connect(user = 'root',
@@ -25,19 +38,16 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         except Exception as e:
             print(f"Failed to connect: {e}")
 
-        self.pnl = wx.Panel(self)
-
-        self.welcome_screen("imgs/logo.png")
-
 
     def welcome_screen(self, imgPath):
-
-        '''loads welcome image and screen'''
+        '''
+        loads welcome image and screen
+        '''
 
         self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper(imgPath))
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        main_sizer.Add(self.bg_bitmap, 1, wx.ALIGN_CENTER, border=40)
+        main_sizer.Add(self.bg_bitmap, 1, wx.ALIGN_CENTER, border=20)
 
         self.pnl.SetSizer(main_sizer)
         self.pnl.Layout()
@@ -67,44 +77,42 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         # print(f"{mX, mY}")
 
         event.Skip(False)
+        self.pnl.Destroy() # destroy old panel
+        self.pnl = wx.Panel(self) # create new one
 
         # testing
-        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper("imgs/homescreen.png"))
+        self.bg_bitmap = wx.StaticBitmap(self.pnl, bitmap = self.image_helper("imgs/hs2.png"))
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
-        main_sizer.Add(self.bg_bitmap, 1, wx.ALIGN_CENTER, border=20)
+        main_sizer.Add(self.bg_bitmap, 3, wx.ALIGN_CENTER, border=20)
 
         self.pnl.SetSizer(main_sizer)
         self.pnl.Layout()
         self.Centre()
 
+        
+        # # cant get buttons working with panels.
+        # # eventually can make a button func within the class that will control all these but
+        # button_VB = wx.Button(self.pnl, label="Run Query")
+        # button_VB.SetPosition((415, 144))
+        # button_VB.Bind(wx.EVT_BUTTON, self.button_click_baguette) # this is what creates the 'event' for the button to run on click
 
+        # button = wx.Button(self.pnl, label="Run Query")
+        # button.Bind(wx.EVT_BUTTON, self.button_click_pastry)
+        # button.SetPosition((100, 144))
+        # # vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
 
-        # buttons
-        # vbox = wx.BoxSizer(wx.VERTICAL) # this will put buttons vert
+        # button_fantasy = wx.Button(self.pnl, label="Run Query")
+        # button_fantasy.Bind(wx.EVT_BUTTON, self.button_click_fantasy_books)
+        # button_fantasy.SetPosition((100, 237))
 
-        # eventually can make a button func within the class that will control all these but
-        button_VB = wx.Button(self.pnl, label="Run Query")
-        button_VB.SetPosition((415, 144))
-        button_VB.Bind(wx.EVT_BUTTON, self.button_click_baguette) # this is what creates the 'event' for the button to run on click
-        # vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
+        # button_ingredient= wx.Button(self.pnl, label="Run Query")
+        # button_ingredient.Bind(wx.EVT_BUTTON, self.button_click_ingredient)
+        # button_ingredient.SetPosition((415, 237))
 
-        button = wx.Button(self.pnl, label="Run Query")
-        button.Bind(wx.EVT_BUTTON, self.button_click_pastry)
-        button.SetPosition((100, 144))
-        # vbox.Add(button, flag=wx.EXPAND | wx.ALL, border=10)
-
-        button_fantasy = wx.Button(self.pnl, label="Run Query")
-        button_fantasy.Bind(wx.EVT_BUTTON, self.button_click_fantasy_books)
-        button_fantasy.SetPosition((100, 237))
-
-        button_ingredient= wx.Button(self.pnl, label="Run Query")
-        button_ingredient.Bind(wx.EVT_BUTTON, self.button_click_ingredient)
-        button_ingredient.SetPosition((415, 237))
-
-        # self.pnl.SetSizer(vbox)
-
+        self.pnl.SetSizer(main_sizer)
         self.Layout()
+
 
 
     def button_click_pastry(self, event):
@@ -262,6 +270,7 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         
         img = wx.Image(imgPath, wx.BITMAP_TYPE_PNG)
         return wx.Bitmap(img)
+    
 
 
 if __name__ == "__main__":
