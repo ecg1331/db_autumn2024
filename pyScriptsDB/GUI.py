@@ -90,6 +90,7 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         self.pnl.Layout()
         self.Centre()
 
+        self.create_query_panel("List ingredients in Vegan Chicken Baguette", self.button_click_baguette, (100,100))
         
         # # cant get buttons working with panels.
         # # eventually can make a button func within the class that will control all these but
@@ -113,7 +114,26 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
         self.pnl.SetSizer(main_sizer)
         self.Layout()
 
+    def create_query_panel(self, text, handler, pos):
+        '''
+        Creates a tiny panel with text and a button at the given position.
+        '''
 
+        query_panel = wx.Panel(self.pnl, size=(200, 200), pos=pos)
+
+        layout = wx.BoxSizer(wx.VERTICAL)
+
+        label = wx.StaticText(query_panel, label=text)
+        label.Wrap(170) 
+        layout.Add(label, 0, wx.ALIGN_CENTER | wx.TOP, 10)
+
+        button = wx.Button(query_panel, label="Run Query")
+        button.Bind(wx.EVT_BUTTON, handler)
+        layout.Add(button, 0, wx.ALIGN_CENTER | wx.TOP, 10)
+
+
+        query_panel.SetSizer(layout)
+        query_panel.Layout()
 
     def button_click_pastry(self, event):
         '''
