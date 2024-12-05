@@ -12,30 +12,72 @@ def get_db_connection():
         database='MyCoffeeShop'
     )
 
-
-# Function to execute SQL queries
 def execute_query(query):
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute(query)
-    result = cursor.fetchall()
-    connection.commit()  # Commit changes if necessary (useful for insert/update)
-    cursor.close()
-    connection.close()
-    return result
+    connection = None
+    cursor = None
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        
+        # Get column names from the cursor description
+        columns = [column[0] for column in cursor.description]
+        print(f"Columns: {columns}")  # Debugging: Print column names
+
+        # Convert each row to a dictionary, with column names as keys
+        result_dict = []
+        for row in result:
+            row_dict = {}
+            for i, column in enumerate(columns):
+                row_dict[column] = row[i]  # Map column name to value
+            result_dict.append(row_dict)
+
+        print(f"Result: {result_dict}")  # Debugging: Print result after mapping
+        return result_dict  # Return a list of dictionaries
+
+    except mysql.connector.Error as err:
+        return {"error": f"Database error: {err}"}
+    except Exception as e:
+        return {"error": f"An unexpected error occurred: {e}"}
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+
+    # connection.commit()  # Commit changes if necessary
+    # cursor.close()
+    # connection.close()
+
+    # # Flatten the result if it only contains one column
+    # if result and len(result[0]) == 1:
+    #     return [row[0] for row in result]
+    # return result
 
 # Route to handle different queries based on the button clicked (GET request)
 @app.route('/run_query/<query_type>', methods=['GET'])
 def run_query_get(query_type):
     # Define your queries here
     queries = {
-        'query_1': "SELECT * FROM table1;",
+        'query_1': """
+            SELECT Item, Price
+            FROM Drinks
+            WHERE Season = 'Fall';
+            """,
         'query_2': '''
             SELECT ItemName
             FROM Menu
             WHERE Category = 'Breakfast';
         ''',
         'query_3': "SELECT * FROM table3;",
+        'query_7': '''
+            SELECT Title
+            FROM Books
+            WHERE Genre = 'Fantasy'
+            LIMIT 10;
+        '''
         # Add more queries as needed
     }
 
