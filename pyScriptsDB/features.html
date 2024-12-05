@@ -14,6 +14,56 @@
 
     
     <style>
+
+        .modal-content {
+            background-color: #f7f7f4; /* Light gray background */
+            border-radius: 8px;
+        }
+    
+        /* Change the modal header background color */
+        .modal-header {
+            background-color: #f7f7f7; 
+            display: flex; /* Enable flexbox */
+            justify-content: space-between; /* Space between title and icon */
+            align-items: center; /* Align vertically */
+            border-color: #e78f79;
+            font-weight: bold;
+        
+        }
+    
+        .custom-list-group {
+            background-color: #f7f7f4; 
+        }
+
+
+        .custom-list-group .list-group-item:hover {
+            background-color: #dededc; 
+        }
+
+        /* Change the modal footer background color */
+        .modal-footer {
+            background-color: #f7f7f7; /* Light gray footer */
+            border-color: #e78f79;
+        }
+    
+        /* Change the modal overlay (background color when modal is open) */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.7); /* Darker backdrop */
+        }
+    
+        .modal-border {
+            color: #e06f52
+        }
+    
+        .btn-primary {
+            background-color: #dc5f3f; /* Custom color for primary button */
+            border: none;
+        }
+    
+        .btn-primary:hover {
+            background-color: #c65639; /* Darker shade on hover */
+        }
+        
         .feature-card {
             border: 1.5px solid #d9593a;
             padding: 20px;
@@ -68,6 +118,46 @@
                 flex: 1 0 100%; /* 1 item per row on extra small screens */
             }
         }
+
+        #queryModalLabel {
+            margin-right: 10px; /* Adds space between title and icon */
+            font-weight: bold;
+            
+        }
+
+        .modal-icon {
+            width: 30px; /* Size of the icon container */
+            height: 30px; /* Size of the icon container */
+            background-color: #d9593a; /* Background color of the icon */
+            color: #f7f7f4; /* Icon color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%; /* Makes the icon container circular */
+            margin-right: 10px;
+        }
+
+        .modal-icon i {
+            font-size: 1.0rem; /* Adjust the size of the icon */
+        }
+
+        #queryModal .modal-body {
+            background-color: #f7f7f4; /* Same as the modal background color */
+        }
+    
+        #queryModal .modal-body .list-group {
+            background-color: #f7f7f4; /* Same background as modal */
+        }
+    
+        #queryModal .modal-body .list-group-item {
+            background-color: #f7f7f4; /* Same background as modal */
+            border-color: #e06f52;
+        }
+    
+        #queryModal .modal-body .list-group-item:hover {
+            background-color: #dededc; /* Lighter gray on hover */
+        }
+
     </style>
 </head>
 <body>
@@ -78,12 +168,12 @@
     <div class="feature-card-container">
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_1')">
+            <div class="feature-card" onclick="runQuery('query_1', 'Fall Beverages', 'bi-cup-hot')">
                 <div class="feature-card-icon">
                     <i class="bi bi-cup-hot"></i> 
                 </div>
-                <div class="feature-card-title">Feature 1</div>
-                <div class="feature-card-description">Description of Feature 1. This will run query 1 when clicked.</div>
+                <div class="feature-card-title">Fall Beverages</div>
+                <div class="feature-card-description">Fall beverages by name and price</div>
             </div>
         </div>
 
@@ -138,12 +228,12 @@
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_7')">
+            <div class="feature-card" onclick="runQuery('query_7', 'Fantasy Novels', 'bi-chat0right-quote')">
                 <div class="feature-card-icon">
                     <i class="bi bi-chat-right-quote"></i>
                 </div>
-                <div class="feature-card-title">Feature 7</div>
-                <div class="feature-card-description">Description of Feature 7.</div>
+                <div class="feature-card-title">Fantasy Novels</div>
+                <div class="feature-card-description">10 fantasy novels</div>
             </div>
         </div>
 
@@ -183,13 +273,17 @@
 
 <!-- Modal for displaying query results -->
 <div class="modal fade" id="queryModal" tabindex="-1" aria-labelledby="queryModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-dialog-scrollable" id="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="queryModalLabel"></h5>
-                <i id="queryModalIcon" class="bi"></i> <!-- Icon will be added dynamically -->
+                <!-- Modal Title -->
+                <h5 class="modal-title" id="queryModalLabel" style="flex-grow: 1;"></h5>
+                <div id="queryModalIcon" class="modal-icon">
+                    <i class="bi"></i> <!-- Icon will be added dynamically -->
+                </div>
+                <!-- Close button -->
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+                        </div>
             <div class="modal-body" id="modalBody">
                 <!-- Query results will go here -->
                 <div class="loading">
@@ -209,61 +303,97 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
 <script>
-    function runQuery(queryType, queryTitle, queryIcon) {
-        console.log('Running query:', queryType);  // Debugging log
-
+    const queryMetadata = {
+        'query_1': { title: 'Feature 1 Title', icon: 'bi-cup-hot' },
+        'query_2': { title: 'Breakfast Items', icon: 'bi-egg-fried' },
+        'query_3': { title: 'Feature 3 Title', icon: 'bi-receipt-cutoff' },
+        'query_4': { title: 'Feature 4 Title', icon: 'bi-basket' },
+        'query_5': { title: 'Feature 5 Title', icon: 'bi-bookmark-heart' },
+        'query_6': { title: 'Feature 6 Title', icon: 'bi-cake2' },
+        'query_7': { title: 'Feature 7 Title', icon: 'bi-chat-right-quote' },
+        'query_8': { title: 'Feature 8 Title', icon: 'bi-gift' },
+        'query_9': { title: 'Feature 9 Title', icon: 'bi-star' },
+        'query_10': { title: 'Feature 10 Title', icon: 'bi-shop' }
+    };
+    
+    function runQuery(queryType) {
+        const metadata = queryMetadata[queryType];
+    
         // Set modal title and icon dynamically based on query type
         const modalTitle = document.getElementById('queryModalLabel');
         const modalIcon = document.getElementById('queryModalIcon');
-        modalTitle.textContent = queryTitle;
-        modalIcon.className = 'bi ' + queryIcon; // Set icon class
-
-        // Fetch the results dynamically via AJAX
+        modalTitle.textContent = metadata.title;
+    
+        // Set the icon class and update the modal icon
+        const icon = modalIcon.querySelector('i');
+        icon.className = 'bi ' + metadata.icon; // Set icon class
+    
+        // Clear any existing content in the modal body
+        const modalBody = document.getElementById('modalBody');
+        modalBody.innerHTML = '';  // Clear any existing content
+    
         fetch(`/run_query/${queryType}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Query Result:', data);  // Debugging log
-                const modalBody = document.getElementById('modalBody');
-                modalBody.innerHTML = '';  // Clear any existing content
-
-                if (data.error) {
-                    modalBody.innerHTML = `<p>Error: ${data.error}</p>`;
-                } else {
-                    let html = '';
-
-                    if (Array.isArray(data)) {
-                        // If it's an array of rows (like SELECT results)
-                        html += '<table class="table table-striped"><thead><tr><th>Item Name</th></tr></thead><tbody>';
-                        
+        .then(response => response.json())
+        .then(data => {
+            console.log("Query result:", data);  // Log the data to check its structure
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = '';  // Clear any existing content
+    
+            if (data.error) {
+                modalBody.innerHTML = `<p>Error: ${data.error}</p>`;
+            } else {
+                let html = '';
+    
+                // Check if we have an array of objects or a simple list
+                if (Array.isArray(data)) {
+                    if (data.length && typeof data[0] === 'object' && Object.keys(data[0]).length > 1) {
+                        // If it's an array of objects (multiple columns)
+                        html += '<table class="table table-striped"><thead><tr>';
+    
+                        // Add column names as table headers
+                        Object.keys(data[0]).forEach(column => {
+                            html += `<th>${column}</th>`;
+                        });
+    
+                        html += '</tr></thead><tbody>';
+    
+                        // Add the rows
                         data.forEach(row => {
                             html += '<tr>';
-                            html += `<td>${row[0]}</td>`;  // Accessing the first (and only) element in each row
+                            Object.values(row).forEach(cell => {
+                                html += `<td>${cell !== null && cell !== undefined ? cell : ''}</td>`;
+                            });
                             html += '</tr>';
                         });
-
+    
                         html += '</tbody></table>';
                     } else {
-                        // If it's a single value (like total sales or order count)
-                        html += `<p><strong>${data}</strong></p>`;
+                        // If it's just a simple list (e.g., one column)
+                        html += '<ul class="list-group list-group-flush custom-list-group">';
+                        data.forEach(row => {
+                            const item = row[Object.keys(row)[0]] || "Unknown Item";
+                            html += `<li class="list-group-item">${item}</li>`;
+                        });
+                        html += '</ul>';
                     }
-
-                    modalBody.innerHTML = html;  // Insert the result into the modal body
+                } else {
+                    // Handle if it's a single value (e.g., total sales or order count)
+                    html += `<p>${data}</p>`;
                 }
-
-                // Ensure modal is opened after content is updated
-                const modal = new bootstrap.Modal(document.getElementById('queryModal'), {
-                    keyboard: false
-                });
-
-                console.log('Opening modal...');
-                modal.show();  // Show the modal
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);  // Debugging log
-                document.getElementById('modalBody').innerHTML = `<p>Error fetching data: ${error}</p>`;
-            });
-
+    
+                modalBody.innerHTML = html;  // Insert the generated HTML into the modal body
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+            document.getElementById('modalBody').innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+        });
+                        // Show the modal with Bootstrap Modal API
+        const modal = new bootstrap.Modal(document.getElementById('queryModal'));
+        modal.show();
     }
+    
+        
 </script>
 
 
