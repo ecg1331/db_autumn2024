@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <body style="background-color: #f7f7f4;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask App - Features</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS (from CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons CSS (from CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    
+    <style>
+        .feature-card {
+            border: 1.5px solid #d9593a;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card-icon {
+            font-size: 3rem;
+            color: #d9593a;  /* Change this to your desired hex color */
+        }
+
+        .feature-card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .feature-card-description {
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        .feature-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        /* Ensure responsiveness */
+        .feature-card-container .col-md-4 {
+            flex: 1 0 30%; /* 3 items per row on medium screens */
+            min-width: 250px; /* Ensures the cards shrink on smaller screens */
+        }
+
+        @media (max-width: 768px) {
+            .feature-card-container .col-md-4 {
+                flex: 1 0 45%; /* 2 items per row on smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .feature-card-container .col-md-4 {
+                flex: 1 0 100%; /* 1 item per row on extra small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="text-center">Our Features</h1>
+
+    <div class="feature-card-container">
+
+        <div class="col-md-4">
+            <div class="feature-card" onclick="runQuery('query_1')">
+                <div class="feature-card-icon">
+                    <i class="bi bi-cup-hot"></i> 
+                </div>
+                <div class="feature-card-title">Feature 1</div>
+                <div class="feature-card-description">Description of Feature 1. This will run query 1 when clicked.</div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-card" onclick="runQuery('query_2', 'Breakfast Items', 'bi-egg-fried')">
+                <div class="feature-card-icon">
+                    <i class="bi bi-egg-fried"></i> <!-- Replace with your own icon -->
+                </div>
+                <div class="feature-card-title">Breakfast Items</div>
+                <div class="feature-card-description">Menu items in the breakfast category</div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-card" onclick="runQuery('query_3')">
+                <div class="feature-card-icon">
+                    <i class="bi bi-receipt-cutoff"></i>
+                </div>
+                <div class="feature-card-title">Feature 3</div>
+                <div class="feature-card-description">Description of Feature 3.</div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-card" onclick="runQuery('query_4')">
+                <div class="feature-card-icon">
+                    <i class="bi bi-basket"></i>
+                </div>
+                <div class="feature-card-title">Feature 4</div>
+                <div class="feature-card-description">Description of Feature 4.</div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="feature-card" onclick="runQuery('query_5')">
+                <div class="feature-card-icon">
+                    <i class="bi bi-bookmark-heart"></i>
+                </div>
+                <div class="feature-card-title">Feature 5</div>
+                <div class="feature-card-description">Description of Feature 5.</div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-card" onclick="runQuery('query_6')">
+                <div class="feature-card-icon">
+                    <i class="bi bi-cake2"></i>
+                </div>
+                <div class="feature-card-title">Feature 6</div>
+                <div class="feature-card-description">Description of Feature 6.</div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-card" onclick="runQuery('query_7')">
+                <div class="feature-card-icon">
+                    <i class="bi bi-chat-right-quote"></i>
+                </div>
+                <div class="feature-card-title">Feature 7</div>
+                <div class="feature-card-description">Description of Feature 7.</div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-card" onclick="runQuery('query_8')">
+                <div class="feature-card-icon">
+                    <i class="bi bi-gift"></i>
+                </div>
+                <div class="feature-card-title">Feature 8</div>
+                <div class="feature-card-description">Description of Feature 8.</div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-card" onclick="runQuery('query_9')">
+                <div class="feature-card-icon">
+                    <i class="bi bi-star"></i>
+                </div>
+                <div class="feature-card-title">Feature 9</div>
+                <div class="feature-card-description">Description of Feature 9.</div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-card" onclick="runQuery('query_10')">
+                <div class="feature-card-icon">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <div class="feature-card-title">Feature 10</div>
+                <div class="feature-card-description">Description of Feature 10.</div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<!-- Modal for displaying query results -->
+<div class="modal fade" id="queryModal" tabindex="-1" aria-labelledby="queryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="queryModalLabel"></h5>
+                <i id="queryModalIcon" class="bi"></i> <!-- Icon will be added dynamically -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Query results will go here -->
+                <div class="loading">
+                    <p>Loading...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+<script>
+    function runQuery(queryType, queryTitle, queryIcon) {
+        console.log('Running query:', queryType);  // Debugging log
+
+        // Set modal title and icon dynamically based on query type
+        const modalTitle = document.getElementById('queryModalLabel');
+        const modalIcon = document.getElementById('queryModalIcon');
+        modalTitle.textContent = queryTitle;
+        modalIcon.className = 'bi ' + queryIcon; // Set icon class
+
+        // Fetch the results dynamically via AJAX
+        fetch(`/run_query/${queryType}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Query Result:', data);  // Debugging log
+                const modalBody = document.getElementById('modalBody');
+                modalBody.innerHTML = '';  // Clear any existing content
+
+                if (data.error) {
+                    modalBody.innerHTML = `<p>Error: ${data.error}</p>`;
+                } else {
+                    let html = '';
+
+                    if (Array.isArray(data)) {
+                        // If it's an array of rows (like SELECT results)
+                        html += '<table class="table table-striped"><thead><tr><th>Item Name</th></tr></thead><tbody>';
+                        
+                        data.forEach(row => {
+                            html += '<tr>';
+                            html += `<td>${row[0]}</td>`;  // Accessing the first (and only) element in each row
+                            html += '</tr>';
+                        });
+
+                        html += '</tbody></table>';
+                    } else {
+                        // If it's a single value (like total sales or order count)
+                        html += `<p><strong>${data}</strong></p>`;
+                    }
+
+                    modalBody.innerHTML = html;  // Insert the result into the modal body
+                }
+
+                // Ensure modal is opened after content is updated
+                const modal = new bootstrap.Modal(document.getElementById('queryModal'), {
+                    keyboard: false
+                });
+
+                console.log('Opening modal...');
+                modal.show();  // Show the modal
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);  // Debugging log
+                document.getElementById('modalBody').innerHTML = `<p>Error fetching data: ${error}</p>`;
+            });
+
+    }
+</script>
+
+
+</body>
+</html>
+
+
