@@ -15,7 +15,23 @@ curr = conn.cursor()
 
 direct = os.path.dirname(os.path.abspath(__file__))
 # INSERTING DATA
-# 1. Menu
+
+# 1. Skew
+try:
+    skew_query = """
+    INSERT INTO Skews
+    VALUES (%s, %s)
+    """
+    file_path = os.path.join(direct, "tables/skews_table.csv")
+    skew = pd.read_csv(file_path, index_col=False)
+    skewList = [tuple(row) for row in skew.values.tolist()]
+    curr.executemany(skew_query, skewList)
+    conn.commit()
+except Exception as e:
+    print(f"Error inserting into skew table: {e}")
+
+
+# 2. Menu
 try:
     file_path = os.path.join(direct, "tables/menu_items_table.csv")
     menu_csv = pd.read_csv(file_path, index_col=False)
@@ -31,7 +47,7 @@ except Exception as e:
     print(f"Error inserting menu data: {e}")
 
 
-# 2. Ingredients
+# 3. Ingredients
 try:
     file_path = os.path.join(direct, "tables/ingredients_table.csv")
     ingredients = pd.read_csv(file_path, index_col=False)
@@ -46,7 +62,7 @@ try:
 except Exception as e:
     print(f"Error inserting ingredient data: {e}")
 
-# 3. Receipes
+# 4. Receipes
 try:
     file_path = os.path.join(direct, "tables/recipes_table.csv")
     recipes = pd.read_csv(file_path, index_col=False)
@@ -62,11 +78,11 @@ except Exception as e:
     print(f"Errror inserting recipes data: {e}")
 
 
-# 4. Books
+# 5. Books
 try:
     books_insert = """
     INSERT INTO Books
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """
     file_path = os.path.join(direct, "tables/books.csv")
     books = pd.read_csv(file_path, index_col=False)
@@ -79,7 +95,7 @@ except Exception as e:
     print(f"Errror inserting books data: {e}")
 
 
-# 5. Drinks
+# 6. Drinks
 try:
     drink_insert = """
     INSERT INTO Drinks
@@ -95,7 +111,7 @@ except Exception as e:
     print(f"Error inserting drinks data: {e}")
 
 
-# 6. Pastries
+# 7. Pastries
 try:
     pastries_insert = """
     INSERT INTO Pastries
@@ -110,7 +126,7 @@ except Exception as e:
     print(f"Error inserting pastry data: {e}")
 
 
-# 7. Baristas
+# 8. Baristas
 try:
     barista_insert = """
     INSERT INTO Baristas
@@ -125,7 +141,7 @@ except Exception as e:
     print(f"Error inserting into barista table: {e}")
 
 
-# 8. Customer Loyalty
+# 9. Customer Loyalty
 try:
     cl_query = """
     INSERT INTO Customer_Loyalty
@@ -140,7 +156,7 @@ except Exception as e:
     print(f"Error inserting into cl table: {e}")
 
 
-# 9. Sales
+# 10. Sales
 try:
     sales_query = """
     INSERT INTO Sales
@@ -155,22 +171,7 @@ except Exception as e:
     print(f"Error inserting into sales table: {e}")
 
 
-# 10. Skew
-try:
-    skew_query = """
-    INSERT INTO Skews
-    VALUES (%s)
-    """
-    file_path = os.path.join(direct, "tables/skews_table.csv")
-    skew = pd.read_csv(file_path, index_col=False)
-    skewList = [tuple(row) for row in skew.values.tolist()]
-    curr.executemany(skew_query, skewList)
-    conn.commit()
-except Exception as e:
-    print(f"Error inserting into skew table: {e}")
-
-
-# 12. Sales Item
+# 11. Sales Item
 try:
     sales_item_query = """
     INSERT INTO Sales_Item
@@ -184,6 +185,19 @@ try:
 except Exception as e:
     print(f"Error inserting into sales item table: {e}")
 
+# 12. Pairs Item
+try:
+    pairs_query = """
+    INSERT INTO Pairs
+    VALUES (%s, %s, %s, %s)
+    """
+    file_path = os.path.join(direct, "tables/pairs_table.csv")
+    pairs_item = pd.read_csv(file_path, index_col=False)
+    pairsList = [tuple(row) for row in pairs_item.values.tolist()]
+    curr.executemany(pairs_query, pairsList)
+    conn.commit()
+except Exception as e:
+    print(f"Error inserting into sales item table: {e}")
 
 
 print("Completed")
