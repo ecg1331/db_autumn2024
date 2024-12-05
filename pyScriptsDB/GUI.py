@@ -263,7 +263,7 @@ class DBInterface(wx.Frame): # dbinterface extends wx.frame
 
         try:
             self.conn = mysql.connector.connect(user = 'root',
-                                password = ' ',
+                                password = 'Mori1331!',
                                 host = 'localhost',
                                 database = 'MyCoffeeShop'
                                 )
