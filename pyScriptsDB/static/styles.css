@@ -1,0 +1,16 @@
+/* Modal Icon Styling */
+.modal-icon {
+    width: 50px; /* Size of the icon container */
+    height: 50px; /* Size of the icon container */
+    background-color: #d9593a; /* Background color of the icon */
+    color: white; /* Icon color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%; /* Makes the icon container circular */
+    margin-right: 10px;
+}
+
+.modal-icon i {
+    font-size: 1.5rem; /* Adjust the size of the icon */
+}
