@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <body style="background-color: #f7f7f4;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask App - Features</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>HP Coffee Queries</title>
     <!-- Bootstrap CSS (from CDN) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -125,6 +123,12 @@
             
         }
 
+        #yearInputModalLabel {
+            margin-right: 10px; /* Adds space between title and icon */
+            font-weight: bold;
+            
+        }
+
         .modal-icon {
             width: 30px; /* Size of the icon container */
             height: 30px; /* Size of the icon container */
@@ -139,6 +143,11 @@
 
         .modal-icon i {
             font-size: 1.0rem; /* Adjust the size of the icon */
+            display: inline-block !important; /* Make sure it's displayed */
+            color: ##f7f7f4 !important;  /* Make the icon white */
+            line-height: 1;  /* Ensure no weird alignment */
+            vertical-align: middle;  /* Make sure it's aligned correctly */
+        
         }
 
         #queryModal .modal-body {
@@ -158,9 +167,19 @@
             background-color: #dededc; /* Lighter gray on hover */
         }
 
+        #queryModal .modal-header .modal-icon i {
+            font-size: 1.0rem; /* Adjust the size of the icon */
+            display: inline-block !important; /* Make sure it's displayed */
+            color: ##f7f7f4 !important;  /* Make the icon white */
+            line-height: 1;  /* Ensure no weird alignment */
+            vertical-align: middle;  /* Make sure it's aligned correctly */
+        }
+        
+
     </style>
 </head>
-<body>
+<body style="background-color: #f7f7f4;">
+
 
 <div class="container mt-5">
     <h1 class="text-center">Our Features</h1>
@@ -178,17 +197,17 @@
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_2', 'Breakfast Items', 'bi-egg-fried')">
+            <div class="feature-card" onclick="runQuery('query_2', ' Popular Breakfast Items', 'bi-egg-fried')">
                 <div class="feature-card-icon">
-                    <i class="bi bi-egg-fried"></i> <!-- Replace with your own icon -->
+                    <i class="bi bi-egg-fried"></i> <!-- Correct icon -->
                 </div>
-                <div class="feature-card-title">Breakfast Items</div>
-                <div class="feature-card-description">Menu items in the breakfast category</div>
+                <div class="feature-card-title">Popular Breakfast Items</div>
+                <div class="feature-card-description">Most popular menu items in the breakfast category, sorted by amount sold</div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_3')">
+            <div class="feature-card" onclick="runQuery('query_3', , 'bi-receipt-cutoff')">
                 <div class="feature-card-icon">
                     <i class="bi bi-receipt-cutoff"></i>
                 </div>
@@ -198,7 +217,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_4')">
+            <div class="feature-card" onclick="runQuery('query_4', ,'bi-basket')">
                 <div class="feature-card-icon">
                     <i class="bi bi-basket"></i>
                 </div>
@@ -208,7 +227,7 @@
         </div>
         
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_5')">
+            <div class="feature-card" onclick="runQuery('query_5', ,'bi-bookmark-heart')">
                 <div class="feature-card-icon">
                     <i class="bi bi-bookmark-heart"></i>
                 </div>
@@ -218,7 +237,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_6')">
+            <div class="feature-card" onclick="runQuery('query_6', , 'bi-cake2')">
                 <div class="feature-card-icon">
                     <i class="bi bi-cake2"></i>
                 </div>
@@ -228,7 +247,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_7', 'Fantasy Novels', 'bi-chat0right-quote')">
+            <div class="feature-card" onclick="requestYearForQuery7()">
                 <div class="feature-card-icon">
                     <i class="bi bi-chat-right-quote"></i>
                 </div>
@@ -236,9 +255,10 @@
                 <div class="feature-card-description">10 fantasy novels</div>
             </div>
         </div>
+        
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_8')">
+            <div class="feature-card" onclick="runQuery('query_8', 'feature 8','bi-gift')">
                 <div class="feature-card-icon">
                     <i class="bi bi-gift"></i>
                 </div>
@@ -248,7 +268,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_9')">
+            <div class="feature-card" onclick="runQuery('query_9', ,'bi-star')">
                 <div class="feature-card-icon">
                     <i class="bi bi-star"></i>
                 </div>
@@ -258,7 +278,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_10')">
+            <div class="feature-card" onclick="runQuery('query_10', , 'bi-shop')">
                 <div class="feature-card-icon">
                     <i class="bi bi-shop"></i>
                 </div>
@@ -270,20 +290,43 @@
 
     </div>
 </div>
+<!-- Modal for Accepting User Input (year) -->
+<div class="modal fade" id="yearInputModal" tabindex="-1" aria-labelledby="yearInputModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="yearInputModalLabel" style="flex-grow: 1;">Select Year for Fantasy Books</h5>
+                <div id="queryModalIcon" class="modal-icon">
+                    <i class="bi"></i> <!-- Icon will be added dynamically -->    
+                </div>
+
+                <button type="button" class="btn-close"onclick="closeModal()"  data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="yearInputForm" onsubmit="handleYearSubmit(event)">
+                    <div class="mb-3">
+                        <label for="year" class="form-label">Enter Year</label>
+                        <input type="number" class="form-control" id="year" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Modal for displaying query results -->
 <div class="modal fade" id="queryModal" tabindex="-1" aria-labelledby="queryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" id="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <!-- Modal Title -->
                 <h5 class="modal-title" id="queryModalLabel" style="flex-grow: 1;"></h5>
                 <div id="queryModalIcon" class="modal-icon">
                     <i class="bi"></i> <!-- Icon will be added dynamically -->
                 </div>
                 <!-- Close button -->
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
+                <button type="button" class="btn-close" onclick="closeModal()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
             <div class="modal-body" id="modalBody">
                 <!-- Query results will go here -->
                 <div class="loading">
@@ -298,102 +341,204 @@
     </div>
 </div>
 
+
 <!-- Bootstrap JS and dependencies -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
 <script>
+    // Global metadata for queries
     const queryMetadata = {
-        'query_1': { title: 'Feature 1 Title', icon: 'bi-cup-hot' },
-        'query_2': { title: 'Breakfast Items', icon: 'bi-egg-fried' },
+        'query_1': { title: 'Fall Beverages', icon: 'bi-cup-hot' },
+        'query_2': { title: 'Popular Breakfast Items', icon: 'bi-egg-fried' },
         'query_3': { title: 'Feature 3 Title', icon: 'bi-receipt-cutoff' },
         'query_4': { title: 'Feature 4 Title', icon: 'bi-basket' },
         'query_5': { title: 'Feature 5 Title', icon: 'bi-bookmark-heart' },
         'query_6': { title: 'Feature 6 Title', icon: 'bi-cake2' },
-        'query_7': { title: 'Feature 7 Title', icon: 'bi-chat-right-quote' },
+        'query_7': { title: 'Fantasy Novels', icon: 'bi-chat-right-quote' },
         'query_8': { title: 'Feature 8 Title', icon: 'bi-gift' },
         'query_9': { title: 'Feature 9 Title', icon: 'bi-star' },
         'query_10': { title: 'Feature 10 Title', icon: 'bi-shop' }
     };
-    
-    function runQuery(queryType) {
-        const metadata = queryMetadata[queryType];
-    
-        // Set modal title and icon dynamically based on query type
-        const modalTitle = document.getElementById('queryModalLabel');
-        const modalIcon = document.getElementById('queryModalIcon');
-        modalTitle.textContent = metadata.title;
-    
-        // Set the icon class and update the modal icon
-        const icon = modalIcon.querySelector('i');
-        icon.className = 'bi ' + metadata.icon; // Set icon class
-    
-        // Clear any existing content in the modal body
-        const modalBody = document.getElementById('modalBody');
-        modalBody.innerHTML = '';  // Clear any existing content
-    
-        fetch(`/run_query/${queryType}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("Query result:", data);  // Log the data to check its structure
-            const modalBody = document.getElementById('modalBody');
-            modalBody.innerHTML = '';  // Clear any existing content
-    
-            if (data.error) {
-                modalBody.innerHTML = `<p>Error: ${data.error}</p>`;
-            } else {
-                let html = '';
-    
-                // Check if we have an array of objects or a simple list
-                if (Array.isArray(data)) {
-                    if (data.length && typeof data[0] === 'object' && Object.keys(data[0]).length > 1) {
-                        // If it's an array of objects (multiple columns)
-                        html += '<table class="table table-striped"><thead><tr>';
-    
-                        // Add column names as table headers
-                        Object.keys(data[0]).forEach(column => {
-                            html += `<th>${column}</th>`;
-                        });
-    
-                        html += '</tr></thead><tbody>';
-    
-                        // Add the rows
-                        data.forEach(row => {
-                            html += '<tr>';
-                            Object.values(row).forEach(cell => {
-                                html += `<td>${cell !== null && cell !== undefined ? cell : ''}</td>`;
-                            });
-                            html += '</tr>';
-                        });
-    
-                        html += '</tbody></table>';
-                    } else {
-                        // If it's just a simple list (e.g., one column)
-                        html += '<ul class="list-group list-group-flush custom-list-group">';
-                        data.forEach(row => {
-                            const item = row[Object.keys(row)[0]] || "Unknown Item";
-                            html += `<li class="list-group-item">${item}</li>`;
-                        });
-                        html += '</ul>';
-                    }
-                } else {
-                    // Handle if it's a single value (e.g., total sales or order count)
-                    html += `<p>${data}</p>`;
-                }
-    
-                modalBody.innerHTML = html;  // Insert the generated HTML into the modal body
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching data:", error);
-            document.getElementById('modalBody').innerHTML = `<p>Error fetching data: ${error.message}</p>`;
-        });
-                        // Show the modal with Bootstrap Modal API
-        const modal = new bootstrap.Modal(document.getElementById('queryModal'));
-        modal.show();
-    }
-    
+
+        // Function to update the icon for the modal
+    function updateIconForModal(modalId, iconClass) {
+        const modalIcon = document.getElementById(modalId).querySelector('.modal-icon i');
         
+        // Remove any previous icon class to avoid conflicts
+        modalIcon.classList.remove(...modalIcon.classList);
+
+        // Add the correct Bootstrap icon class
+        modalIcon.classList.add('bi', iconClass);
+}
+
+        
+        // Function to request the year for query 7 (Fantasy Novels)
+        
+        // Function to run query without year (for other queries)
+        function runQuery(queryType, title, icon) {
+            console.log('runQuery function called with:', queryType, title, icon); // Debugging log
+        
+            const metadata = queryMetadata[queryType];
+            const modalTitle = document.getElementById('queryModalLabel');
+            const modalIcon = document.getElementById('queryModalIcon');
+        
+            // Set the title either from passed value or from metadata
+            modalTitle.textContent = title || metadata.title;
+        
+            // Update the icon based on metadata for this query type
+            updateIconForModal('queryModal', icon || metadata.icon);  // Dynamically update the icon
+            
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = ''; // Clear any existing content
+        
+            // Fetch query data
+            fetch(`/run_query/${queryType}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        modalBody.innerHTML = `<p>Error: ${data.error}</p>`;
+                    } else {
+                        let html = '';
+                        if (Array.isArray(data)) {
+                            if (data.length && typeof data[0] === 'object' && Object.keys(data[0]).length > 1) {
+                                html += '<table class="table table-striped"><thead><tr>';
+                                Object.keys(data[0]).forEach(column => {
+                                    html += `<th>${column}</th>`;
+                                });
+                                html += '</tr></thead><tbody>';
+                                data.forEach(row => {
+                                    html += '<tr>';
+                                    Object.values(row).forEach(cell => {
+                                        html += `<td>${cell !== null && cell !== undefined ? cell : ''}</td>`;
+                                    });
+                                    html += '</tr>';
+                                });
+                                html += '</tbody></table>';
+                            } else {
+                                html += '<ul class="list-group list-group-flush custom-list-group">';
+                                data.forEach(row => {
+                                    const item = row[Object.keys(row)[0]] || "Unknown Item";
+                                    html += `<li class="list-group-item">${item}</li>`;
+                                });
+                                html += '</ul>';
+                            }
+                        } else {
+                            html += `<p>${data}</p>`;
+                        }
+        
+                        modalBody.innerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    document.getElementById('modalBody').innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+                });
+        
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('queryModal'));
+            modal.show();
+        }
+        
+        function requestYearForQuery7() {
+            const metadata = queryMetadata['query_7']; // Get the metadata for query_7
+            const modal = new bootstrap.Modal(document.getElementById('yearInputModal')); // Show the year input modal
+            modal.show();
+            
+            // Reset the modal title and icon for Fantasy Novels
+            const yearModalTitle = document.getElementById('yearInputModalLabel');
+            yearModalTitle.textContent = metadata.title;  // Ensure correct title
+        
+            const yearModalIcon = document.getElementById('queryModalIcon').querySelector('i');
+            yearModalIcon.className = 'bi ' + metadata.icon; // Set correct icon for Fantasy Novels
+        }
+                
+        // Handle year form submission for Fantasy Novels
+// Handle year form submission for Fantasy Novels
+    function handleYearSubmit(event) {
+        event.preventDefault(); // Prevent form submission from reloading the page
+
+        const yearInput = document.getElementById('year').value; // Get the year input
+        let year = parseInt(yearInput);
+
+        if (isNaN(year) || year < 2018 || year > 2024) {
+            alert("Sorry! You must enter a year between 2018 and 2024. Using default year 2024.");
+            year = 2024;  // Default year if invalid input
+        }
+
+        // Close the modal after submitting the year
+        const modalInstance = bootstrap.Modal.getInstance(document.getElementById('yearInputModal'));
+        modalInstance.hide();
+
+        // Call the function to run the query with the selected year and icon
+        runQueryWithYear('query_7', year, 'bi-chat-right-quote');  // Pass the icon here as well
+    }
+                
+        // Function to run query with year (for query 7)
+    // Function to run query with year (for query 7)
+    function runQueryWithYear(queryType, year, icon) {
+        const metadata = queryMetadata[queryType];
+        const modalTitle = document.getElementById('queryModalLabel');
+        const modalIcon = document.getElementById('queryModalIcon');  // This line stays
+
+        // Set the modal title from metadata
+        modalTitle.textContent = metadata.title;
+
+        // Update the icon based on metadata for this query type
+        updateIconForModal('queryModal', icon || metadata.icon);  // Dynamically update the icon
+
+
+        const modalBody = document.getElementById('modalBody');
+        modalBody.innerHTML = ''; // Clear any existing content
+
+        // Fetch query data
+        fetch(`/run_query/${queryType}?year=${year}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    modalBody.innerHTML = `<p>Error: ${data.error}</p>`;
+                } else {
+                    let html = '';
+                    if (Array.isArray(data)) {
+                        if (data.length && typeof data[0] === 'object' && Object.keys(data[0]).length > 1) {
+                            html += '<table class="table table-striped"><thead><tr>';
+                            Object.keys(data[0]).forEach(column => {
+                                html += `<th>${column}</th>`;
+                            });
+                            html += '</tr></thead><tbody>';
+                            data.forEach(row => {
+                                html += '<tr>';
+                                Object.values(row).forEach(cell => {
+                                    html += `<td>${cell !== null && cell !== undefined ? cell : ''}</td>`;
+                                });
+                                html += '</tr>';
+                            });
+                            html += '</tbody></table>';
+                        } else {
+                            html += '<ul class="list-group list-group-flush custom-list-group">';
+                            data.forEach(row => {
+                                const item = row[Object.keys(row)[0]] || "Unknown Item";
+                                html += `<li class="list-group-item">${item}</li>`;
+                            });
+                            html += '</ul>';
+                        }
+                    } else {
+                        html += `<p>${data}</p>`;
+                    }
+
+                    modalBody.innerHTML = html;
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                document.getElementById('modalBody').innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+            });
+
+        // Show the query modal
+        const modal = new bootstrap.Modal(document.getElementById('queryModal'));
+        modal.show();  // Ensure this opens after the year modal closes
+    }
+            
 </script>
 
 
