@@ -7,7 +7,7 @@ app = Flask(__name__)
 def get_db_connection():
     return mysql.connector.connect(
         user='root',
-        password=' ',
+        password='',
         host='localhost',
         database='MyCoffeeShop'
     )
@@ -100,9 +100,12 @@ def run_query_get(query_type):
     # Define your queries here
     queries = {
         'query_1': """
-            SELECT Item, Price
-            FROM Drinks
-            WHERE Season = 'Fall';
+            SELECT D.Item AS Beverage, P.PastryName AS Pastry, (D.Price + P.Price - Pair.Discount) AS Price
+            FROM Drinks AS D
+            JOIN Pairs AS Pair ON D.DrinkSkew = Pair.DrinkSkew
+            JOIN Pastries AS P ON Pair.PastrySkew = P.PastrySkew
+            WHERE D.Season = 'Fall'
+            ORDER BY Price DESC;
             """,
         'query_2': '''
             SELECT 
