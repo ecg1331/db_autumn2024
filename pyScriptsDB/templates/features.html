@@ -33,7 +33,9 @@
             background-color: #f7f7f4; 
         }
 
-
+        .h1 {
+            font-weight: bold;
+        }
         .custom-list-group .list-group-item:hover {
             background-color: #dededc; 
         }
@@ -86,6 +88,7 @@
             font-weight: bold;
             margin-top: 15px;
         }
+        
 
         .feature-card-description {
             margin-top: 10px;
@@ -182,7 +185,7 @@
 
 
 <div class="container mt-5">
-    <h1 class="text-center">Our Features</h1>
+    <h1 class="text-center">Query Menu</h1>
 
     <div class="feature-card-container">
 
@@ -207,12 +210,12 @@
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_3', , 'bi-receipt-cutoff')">
+            <div class="feature-card" onclick="runQuery('query_3', 'Annual Sales Difference', 'bi-receipt-cutoff')">
                 <div class="feature-card-icon">
                     <i class="bi bi-receipt-cutoff"></i>
                 </div>
-                <div class="feature-card-title">Feature 3</div>
-                <div class="feature-card-description">Description of Feature 3.</div>
+                <div class="feature-card-title">Annual Sales Difference</div>
+                <div class="feature-card-description">Finding the difference between sales in 2022 and 2023 (USD) </div>
             </div>
         </div>
 
@@ -227,12 +230,12 @@
         </div>
         
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_5', ,'bi-bookmark-heart')">
+            <div class="feature-card" onclick="runQuery('query_5', 'Popular Book Genres','bi-bookmark-heart')">
                 <div class="feature-card-icon">
                     <i class="bi bi-bookmark-heart"></i>
                 </div>
-                <div class="feature-card-title">Feature 5</div>
-                <div class="feature-card-description">Description of Feature 5.</div>
+                <div class="feature-card-title">Popular Book Genres</div>
+                <div class="feature-card-description">Most popular book genres (by descending item count)</div>
             </div>
         </div>
 
@@ -251,8 +254,8 @@
                 <div class="feature-card-icon">
                     <i class="bi bi-chat-right-quote"></i>
                 </div>
-                <div class="feature-card-title">Fantasy Novels</div>
-                <div class="feature-card-description">10 fantasy novels</div>
+                <div class="feature-card-title">Fantasy Novels Sold</div>
+                <div class="feature-card-description">Display fantasy novels sold (by title) in a user-provided between 2018 and 2024, with 2024 as the default</div>
             </div>
         </div>
         
@@ -268,12 +271,12 @@
         </div>
 
         <div class="col-md-4">
-            <div class="feature-card" onclick="runQuery('query_9', ,'bi-star')">
+            <div class="feature-card" onclick="runQuery('query_9', 'Star Customers' ,'bi-star')">
                 <div class="feature-card-icon">
                     <i class="bi bi-star"></i>
                 </div>
-                <div class="feature-card-title">Feature 9</div>
-                <div class="feature-card-description">Description of Feature 9.</div>
+                <div class="feature-card-title">Star Customers</div>
+                <div class="feature-card-description">Display customer loyalty members who have visited more than 3 times </div>
             </div>
         </div>
 
@@ -351,13 +354,13 @@
     const queryMetadata = {
         'query_1': { title: 'Fall Beverages', icon: 'bi-cup-hot' },
         'query_2': { title: 'Popular Breakfast Items', icon: 'bi-egg-fried' },
-        'query_3': { title: 'Feature 3 Title', icon: 'bi-receipt-cutoff' },
+        'query_3': { title: 'Annual Sales Difference', icon: 'bi-receipt-cutoff' },
         'query_4': { title: 'Feature 4 Title', icon: 'bi-basket' },
-        'query_5': { title: 'Feature 5 Title', icon: 'bi-bookmark-heart' },
+        'query_5': { title: 'Popular Book Genres', icon: 'bi-bookmark-heart' },
         'query_6': { title: 'Feature 6 Title', icon: 'bi-cake2' },
         'query_7': { title: 'Fantasy Novels', icon: 'bi-chat-right-quote' },
         'query_8': { title: 'Feature 8 Title', icon: 'bi-gift' },
-        'query_9': { title: 'Feature 9 Title', icon: 'bi-star' },
+        'query_9': { title: 'Stay Customers', icon: 'bi-star' },
         'query_10': { title: 'Feature 10 Title', icon: 'bi-shop' }
     };
 

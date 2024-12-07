@@ -120,7 +120,42 @@ def run_query_get(query_type):
                 AMTSOLD DESC
             ;
         ''',
-        'query_3': "SELECT * FROM table3;",
+        'query_3': """
+            SELECT 
+                (SELECT 
+                    SUM(SKEW.Price * SI.Quantity)
+                FROM
+                    Sales_Item AS SI
+                JOIN  
+                    Skews AS SKEW ON SI.Item = SKEW.Skew
+                JOIN 
+                    Sales AS SALES ON SALES.Sale_ID = SI.Sale_ID
+                WHERE
+                    YEAR(SALES.Sale_Date) = 2023) 
+                -
+                (SELECT 
+                    SUM(SKEW.Price * SI.Quantity)
+                FROM
+                    Sales_Item AS SI
+                JOIN  
+                    Skews AS SKEW ON SI.Item = SKEW.Skew
+                JOIN 
+                    Sales AS SALES ON SALES.Sale_ID = SI.Sale_ID
+                WHERE
+                    YEAR(SALES.Sale_Date) = 2022) AS SalesDifference;
+        """,
+        'query_5': """
+            SELECT 
+                B.Genre, COUNT(SI.Item) as COUNT
+            FROM
+                Books as B
+            JOIN 
+                Sales_Item AS SI ON SI.Item = B.ISBN
+            GROUP BY 
+                B.Genre
+            ORDER BY 
+                COUNT DESC;
+        """,
         'query_7': '''
             SELECT B.Title
             FROM Books as B
