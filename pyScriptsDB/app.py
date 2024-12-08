@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import mysql.connector
+import re
 
 app = Flask(__name__)
 
@@ -247,10 +248,47 @@ def home():
 def features():
     return render_template('features.html')
 
+queries = {
+    'query_baristas': "SELECT * FROM Baristas LIMIT 10",
+    'query_sales': "SELECT * FROM Sales LIMIT 10",
+    'query_skews': "SELECT * FROM Skews LIMIT 10",
+    'query_books': "SELECT * FROM Books LIMIT 10",
+    'query_customer_loyalty': "SELECT * FROM Customer_Loyalty LIMIT 10",
+    'query_drinks': "SELECT * FROM Drinks LIMIT 10",
+    'query_ingredients': "SELECT * FROM Ingredients LIMIT 10",
+    'query_menu': "SELECT * FROM Menu LIMIT 10",
+    'query_pairs': "SELECT * FROM Pairs LIMIT 10",
+    'query_pastries': "SELECT * FROM Pastries LIMIT 10",
+    'query_recipes': "SELECT * FROM Recipes LIMIT 10",
+    'query_sales_items': "SELECT * FROM Ingredients LIMIT 10"
+}
+
 # Features page route
 @app.route('/tables')
 def tables():
-    return render_template('tables.html')
+    # List of tables and their predefined queries
+    table_queries = {
+        'Baristas': 'query_baristas',
+        'Sales': 'query_sales',
+        'Skews': 'query_skews',
+        'Ingredients': 'query_ingredients',
+        'Books': 'query_books',
+        'Customer_Loyalty': 'query_customer_loyalty',
+        'Menu': 'query_menu',
+        'Pairs': 'query_pairs',
+        'Recipes': 'query_recipes',
+        'Sales_Items': 'query_sales_items'
+        
+        # Add other tables here
+    }
+
+    # Query results for each table
+    table_data = {}
+    for table_name, query_key in table_queries.items():
+        result = execute_query(queries[query_key])
+        table_data[table_name] = result  # Store result by table name
+
+    return render_template('tables.html', table_data=table_data)
 
 @app.route('/get_tables', methods=['GET'])
 def get_tables():
@@ -273,35 +311,24 @@ def get_tables():
         cursor.close()
         connection.close()
 
-@app.route('/run_query/<table_name>', methods=['GET'])
-def run_query_for_table(table_name):
-    # Ensure the table exists in the database
-    connection = get_db_connection()
-    cursor = connection.cursor()
+@app.route('/run_query', methods=['GET'])
+def run_table_query():
+    table_name = request.args.get('table_name')
     
-    try:
-        # Query to get the data from the selected table (limit to 10 rows)
-        cursor.execute(f"SELECT * FROM {table_name} LIMIT 10")
-        result = cursor.fetchall()
+    query_mapping = {
+        'Baristas': 'query_baristas',
+        'Sales': 'query_sales',
+        'Skews': 'query_skews',
+        # Add more tables here
+    }
 
-        # Get column names from the cursor description
-        columns = [desc[0] for desc in cursor.description]
-        
-        # Convert the result to a list of dictionaries
-        result_dict = []
-        for row in result:
-            row_dict = {columns[i]: row[i] for i in range(len(columns))}
-            result_dict.append(row_dict)
+    if table_name in query_mapping:
+        query_key = query_mapping[table_name]
+        result = execute_query(queries[query_key])
+        return render_template('tables.html', table_data={table_name: result})
+    else:
+        return jsonify({"error": f"Query for table '{table_name}' not defined."}), 400
 
-        return jsonify(result_dict)  # Return the data as JSON
-
-    except mysql.connector.Error as err:
-        return jsonify({"error": f"Database error: {err}"}), 500
-    finally:
-        cursor.close()
-        connection.close()
-
-# POST route to handle form submissions for custom queries
 @app.route('/run_query', methods=['POST'])
 def run_query_post():
     query = request.form['query']
