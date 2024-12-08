@@ -104,7 +104,7 @@ def run_query_get(query_type):
             FROM Drinks AS D
             JOIN Pairs AS Pair ON D.DrinkSkew = Pair.DrinkSkew
             JOIN Pastries AS P ON Pair.PastrySkew = P.PastrySkew
-            WHERE D.Season = 'Fall'
+            WHERE D.Season = %s
             ORDER BY Price DESC;
             """,
         'query_2': '''
@@ -147,6 +147,15 @@ def run_query_get(query_type):
                 WHERE
                     YEAR(SALES.Sale_Date) = 2022) AS SalesDifference;
         """,
+        'query_4': """
+            SELECT B.Name AS Name, SUM(SKU.Price * SI.Quantity) AS TotalSales
+                FROM Skews AS SKU
+                JOIN Sales_Item AS SI ON SI.Item = SKU.Skew
+                JOIN Sales AS S on S.Sale_ID = SI.Sale_ID
+                JOIN Baristas AS B ON B.Employee_ID = S.Employee_ID 
+                GROUP BY B.Employee_ID
+                ORDER BY TotalSales DESC;
+        """,
         'query_5': """
             SELECT 
                 B.Genre, COUNT(SI.Item) as COUNT
@@ -159,6 +168,16 @@ def run_query_get(query_type):
             ORDER BY 
                 COUNT DESC;
         """,
+        'query_6': """
+        SELECT B.Name AS Name, B.Phone AS PhoneNumber, COUNT(SI.Quantity) AS CakeSold
+        FROM Pastries AS P
+        JOIN Sales_Item AS SI ON SI.Item = P.PastrySkew 
+        JOIN Sales AS S on S.Sale_ID = SI.Sale_ID
+        JOIN Baristas AS B ON B.Employee_ID = S.Employee_ID
+        WHERE P.PastryName = 'Vegan Carrot Cake'
+        GROUP BY B.Name, B.Phone
+        ORDER BY CakeSold DESC;
+        """,
         'query_7': '''
             SELECT B.Title
             FROM Books as B
@@ -166,12 +185,45 @@ def run_query_get(query_type):
             JOIN Sales_Item AS SI on SI.Item = S.Skew
             JOIN Sales AS SAL on SAL.Sale_ID = SI.Sale_ID
             WHERE B. Genre = 'Fantasy' AND YEAR(SAL.Sale_Date) = %s;
-        '''
+        ''',
+        'query_8': """
+            SELECT I.IngredientName AS Ingredient, COUNT(R.IngredientSkew) AS NumberOfMenuItems, Max(M.Price) AS MaxPriceMenuItem
+                FROM Recipes AS R
+                JOIN Menu AS M ON R.MenuItemSkew = M.MenuItemSkew
+                JOIN Ingredients AS I ON R.IngredientSkew = I.IngredientSkew
+                GROUP BY I.IngredientName
+                HAVING COUNT(R.IngredientSkew) > 3
+                ORDER BY COUNT(R.IngredientSkew) DESC;
+        """,
+        'query_9': """
+        SELECT 
+            CL.Name, CL.Loyalty_ID, COUNT(S.Sale_ID) AS Visits
+        FROM 
+            Customer_Loyalty as CL
+        JOIN
+            Sales AS S ON S.Customer_Loyalty_ID = CL.Loyalty_ID
+        GROUP BY
+            CL.Loyalty_ID
+        HAVING 
+            Visits > 3
+        ORDER BY
+            Visits DESC;
+        """,
+        'query_10': """
+        SELECT M.Category, COUNT(M.MenuItemSkew) AS MenuItemCount, SUM(SI.Quantity) As QuantitySold, SUM(M.Price * SI.Quantity) AS TotalSales
+            FROM Menu AS M
+            JOIN Sales_Item AS SI ON SI.Item = M.MenuItemSkew
+            GROUP BY M.Category
+            ORDER BY M.Category;
+        """
         # Add more queries as needed
     }
-
-    # Check if the query_type exists in the dictionary
-    if query_type == 'query_7':
+    if query_type == 'query_1':
+        season = request.args.get('season', default="Year-Round", type=str)  # Get season from the query parameter
+        query = queries[query_type]
+        result = execute_query(query, (season,))
+        return jsonify(result)
+    elif query_type == 'query_7':
         year = request.args.get('year', default=2024, type=int)  # Get year from the query parameter
         # Validate the year
         if 2018 <= year <= 2024:
@@ -194,6 +246,60 @@ def home():
 @app.route('/features')
 def features():
     return render_template('features.html')
+
+# Features page route
+@app.route('/tables')
+def tables():
+    return render_template('tables.html')
+
+@app.route('/get_tables', methods=['GET'])
+def get_tables():
+    # Connect to the database
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    
+    try:
+        # Query to get the table names
+        cursor.execute("SHOW TABLES")
+        tables = cursor.fetchall()  # This will return a list of tuples
+
+        # Extract table names from the tuples
+        table_names = [table[0] for table in tables]
+
+        return jsonify(table_names)  # Return table names as JSON
+    except mysql.connector.Error as err:
+        return jsonify({"error": f"Database error: {err}"}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+@app.route('/run_query/<table_name>', methods=['GET'])
+def run_query_for_table(table_name):
+    # Ensure the table exists in the database
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    
+    try:
+        # Query to get the data from the selected table (limit to 10 rows)
+        cursor.execute(f"SELECT * FROM {table_name} LIMIT 10")
+        result = cursor.fetchall()
+
+        # Get column names from the cursor description
+        columns = [desc[0] for desc in cursor.description]
+        
+        # Convert the result to a list of dictionaries
+        result_dict = []
+        for row in result:
+            row_dict = {columns[i]: row[i] for i in range(len(columns))}
+            result_dict.append(row_dict)
+
+        return jsonify(result_dict)  # Return the data as JSON
+
+    except mysql.connector.Error as err:
+        return jsonify({"error": f"Database error: {err}"}), 500
+    finally:
+        cursor.close()
+        connection.close()
 
 # POST route to handle form submissions for custom queries
 @app.route('/run_query', methods=['POST'])
