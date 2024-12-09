@@ -426,7 +426,7 @@ def get_all_tables():
 @app.route('/add_entry/<table_name>', methods=['GET', 'POST'])
 def add_entry(table_name):
     print(f"Attempting to add data to table: {table_name}")  # Debugging line
-    
+
     validation_rules = {
         "Menu": {
             "MenuItemSKU": ['number', "sku_number"],
@@ -455,17 +455,22 @@ def add_entry(table_name):
             'Name': ["text", 'name_format'],
             "Email": ["text", "email"],
             "Birthday": ["date", "date"]
-                },
+        },
         "Pastries": {
             "PastrySKU": ['number', "sku_number"],
             "PastryName": ["text", "alpha_plus"],
             "Price": ["number", "integer_or_decimal"],
             "Sell_By_Date": ["date", "date"]                
-            }
+        }
     }
 
     # Get the columns for the table dynamically
     table_columns = get_table_columns(table_name)
+
+    # Get the image URL for the table
+    # table_images = get_all_tables()
+    # table_image_url = table_images.get(table_name, {}).get('image_url', None)
+    table_data = get_all_tables()  # A function that fetches your table names and image URLs
 
     if request.method == 'POST':
         # Handle form data insertion
@@ -497,8 +502,12 @@ def add_entry(table_name):
         # Redirect after successful insertion
         return redirect(url_for('tables'))
     
-    # Return form to the user with columns
-    return render_template('add_entry_form.html', table_name=table_name, table_columns=table_columns, validation_rules=validation_rules.get(table_name, {}))
+    # Return form to the user with columns and image URL
+    return render_template('add_entry_form.html', 
+                           table_name=table_name, 
+                           table_columns=table_columns, 
+                           validation_rules=validation_rules.get(table_name, {}),
+                           table_data=table_data)
 
 def execute_insert_query(query, params=None):
     try:
