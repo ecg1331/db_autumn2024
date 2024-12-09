@@ -4,7 +4,7 @@ from datetime import datetime
 
 # establishing connection
 conn = mysql.connector.connect(user = 'root',
-                               password = '',
+                               password = ' ',
                                host = 'localhost',
                                )
 print(conn)
@@ -20,29 +20,29 @@ except Exception as e:
 # CREATING TABLES
 curr.execute("USE MyCoffeeShop;")
 
-# 1. Skews Table
+# 1. SKUs Table
 try:
-    skew_table = """
-            CREATE TABLE Skews(
-            Skew     VARCHAR(10)      NOT NULL,
+    sku_table = """
+            CREATE TABLE SKUs(
+            SKU     VARCHAR(10)      NOT NULL,
             Price     DECIMAL(4, 2),    
-            PRIMARY KEY (Skew)
+            PRIMARY KEY (SKU)
             );
             """
-    curr.execute(skew_table)
+    curr.execute(sku_table)
 except Exception as e:
-    print(f"Error creating skew table: {e}")
+    print(f"Error creating SKU table: {e}")
 
 #2. Menu
 try:
     menu_query = """
         CREATE TABLE Menu (
-            MenuItemSkew VARCHAR(4)    NOT NULL,
+            MenuItemSKU VARCHAR(4)    NOT NULL,
             ItemName    VARCHAR(45),
             Category    VARCHAR(35),
             Price       DECIMAL(4, 2),
-            PRIMARY KEY (MenuItemSkew),
-            FOREIGN KEY (MenuItemSkew) REFERENCES Skews(Skew)
+            PRIMARY KEY (MenuItemSKU),
+            FOREIGN KEY (MenuItemSKU) REFERENCES SKUs(SKU)
             );
             """
     curr.execute(menu_query)
@@ -53,9 +53,9 @@ except Exception as e:
 try:
     ingredient_table = """
         CREATE TABLE Ingredients (
-            IngredientSkew      VARCHAR(4)    NOT NULL,
+            IngredientSKU      VARCHAR(4)    NOT NULL,
             IngredientName      VARCHAR(30),
-            PRIMARY KEY (IngredientSkew)
+            PRIMARY KEY (IngredientSKU)
             );
             """
     curr.execute(ingredient_table)
@@ -67,13 +67,13 @@ except Exception as e:
 try:
     recipe_table = """
         CREATE TABLE Recipes (
-            MenuItemSkew VARCHAR(4) NOT NULL,
-            IngredientSkew VARCHAR(4) NOT NULL,
-            PRIMARY KEY (MenuItemSkew, IngredientSkew),
-            FOREIGN KEY (MenuItemSkew) REFERENCES Menu(MenuItemSkew)
+            MenuItemSKU VARCHAR(4) NOT NULL,
+            IngredientSKU VARCHAR(4) NOT NULL,
+            PRIMARY KEY (MenuItemSKU, IngredientSKU),
+            FOREIGN KEY (MenuItemSKU) REFERENCES Menu(MenuItemSKU)
                 ON DELETE CASCADE
                 ON UPDATE CASCADE,
-            FOREIGN KEY (IngredientSkew) REFERENCES Ingredients(IngredientSkew)
+            FOREIGN KEY (IngredientSKU) REFERENCES Ingredients(IngredientSKU)
                 ON DELETE CASCADE
                 ON UPDATE CASCADE
         );
@@ -96,7 +96,7 @@ try:
         Genre          VARCHAR(40),
         Price           DECIMAL(4, 2),
         PRIMARY KEY (ISBN),
-        FOREIGN KEY (ISBN) REFERENCES Skews(Skew)
+        FOREIGN KEY (ISBN) REFERENCES SKUs(SKU)
     );
     """
     curr.execute(books_table)
@@ -108,13 +108,13 @@ except Exception as e:
 try:
     drinks_table = """
     CREATE TABLE Drinks(
-    DrinkSkew   VARCHAR(4)     NOT NULL,
+    DrinkSKU   VARCHAR(4)     NOT NULL,
     Item        VARCHAR(35),
     Price       DECIMAL(4, 2),
     Category    VARCHAR(20),
     Season      VARCHAR(20),
-    PRIMARY KEY (DrinkSkew),
-    FOREIGN KEY (DrinkSkew) REFERENCES Skews(Skew)
+    PRIMARY KEY (DrinkSKU),
+    FOREIGN KEY (DrinkSKU) REFERENCES SKUs(SKU)
     );
     """
     curr.execute(drinks_table)
@@ -126,12 +126,12 @@ except Exception as e:
 try:
     pastries_table = """
     CREATE TABLE Pastries (
-    PastrySkew      VARCHAR(4)     NOT NULL,
+    PastrySKU      VARCHAR(4)     NOT NULL,
     PastryName      VARCHAR(40),
     Price           DECIMAL(4, 2),
     Sell_By_Date    DATE,
-    PRIMARY KEY (PastrySkew),
-    FOREIGN KEY (PastrySkew) REFERENCES Skews(Skew)
+    PRIMARY KEY (PastrySKU),
+    FOREIGN KEY (PastrySKU) REFERENCES SKUs(SKU)
     );
     """
     curr.execute(pastries_table)
@@ -196,7 +196,7 @@ try:
             Quantity    INT,
             PRIMARY KEY (Sale_ID, Item),
             FOREIGN KEY (Sale_ID) REFERENCES Sales(Sale_ID),
-            FOREIGN KEY (Item) REFERENCES Skews(Skew)
+            FOREIGN KEY (Item) REFERENCES SKUs(SKU)
             );
             """
     curr.execute(sales_item)
@@ -207,13 +207,13 @@ except Exception as e:
 try:
     pairs = """
             CREATE TABLE Pairs(
-            PastrySkew      VARCHAR(4)      NOT NULL,
-            DrinkSkew       VARCHAR(4)      NOT NULL,
+            PastrySKU      VARCHAR(4)      NOT NULL,
+            DrinkSKU       VARCHAR(4)      NOT NULL,
             SaleDate        DATE            NOT NULL,
             Discount        INT,   
-            PRIMARY KEY (PastrySkew, DrinkSkew, SaleDate),
-            FOREIGN KEY (PastrySkew) REFERENCES Pastries(PastrySkew),
-            FOREIGN KEY (DrinkSkew) REFERENCES Drinks(DrinkSkew)
+            PRIMARY KEY (PastrySKU, DrinkSKU, SaleDate),
+            FOREIGN KEY (PastrySKU) REFERENCES Pastries(PastrySKU),
+            FOREIGN KEY (DrinkSKU) REFERENCES Drinks(DrinkSKU)
             );
             """
     curr.execute(pairs)

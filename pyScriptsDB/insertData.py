@@ -19,10 +19,10 @@ direct = os.path.dirname(os.path.abspath(__file__))
 # 1. Skew
 try:
     skew_query = """
-    INSERT INTO Skews
+    INSERT INTO SKUs
     VALUES (%s, %s)
     """
-    file_path = os.path.join(direct, "tables/skews_table.csv")
+    file_path = os.path.join(direct, "tables/skus_table.csv")
     skew = pd.read_csv(file_path, index_col=False)
     skewList = [tuple(row) for row in skew.values.tolist()]
     curr.executemany(skew_query, skewList)

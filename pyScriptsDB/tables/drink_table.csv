@@ -1,4 +1,4 @@
-DrinkSkew,Item,Price,Category,Seasonality
+DrinkSKU,Item,Price,Category,Seasonality
 300,Small Espresso,2.75,Espresso Bar,Year-Round
 301,Small Macchiato,3.0,Espresso Bar,Year-Round
 302,Small Cortado,3.25,Espresso Bar,Year-Round

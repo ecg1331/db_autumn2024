@@ -22,26 +22,22 @@ def execute_query(query, params=None):
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-        
-        # Execute the query with parameters (if any)
-        cursor.execute(query, params or ())
-        
-        result = cursor.fetchall()
-        
-        # Get column names from the cursor description
-        columns = [column[0] for column in cursor.description]
-        print(f"Columns: {columns}")  # Debugging: Print column names
 
-        # Convert each row to a dictionary, with column names as keys
+        cursor.execute(query, params or ())
+
+        # Ensure all results are read
+        result = cursor.fetchall()  # Fetch all results
+
+        # Get column names
+        columns = [column[0] for column in cursor.description]
+
+        # Convert the result into a dictionary
         result_dict = []
         for row in result:
-            row_dict = {}
-            for i, column in enumerate(columns):
-                row_dict[column] = row[i]  # Map column name to value
+            row_dict = {columns[i]: row[i] for i in range(len(columns))}
             result_dict.append(row_dict)
 
-        print(f"Result: {result_dict}")  # Debugging: Print result after mapping
-        return result_dict  # Return a list of dictionaries
+        return result_dict
 
     except mysql.connector.Error as err:
         return {"error": f"Database error: {err}"}
@@ -52,7 +48,6 @@ def execute_query(query, params=None):
             cursor.close()
         if connection:
             connection.close()
-
 
 # def execute_query(query):
 #     connection = None
@@ -106,9 +101,9 @@ def run_query_get(query_type):
         'query_1': """
             SELECT D.Item AS Beverage, P.PastryName AS Pastry, (D.Price + P.Price - Pair.Discount) AS Price
             FROM Drinks AS D
-            JOIN Pairs AS Pair ON D.DrinkSkew = Pair.DrinkSkew
-            JOIN Pastries AS P ON Pair.PastrySkew = P.PastrySkew
-            WHERE D.Season = %s
+            JOIN Pairs AS Pair ON D.DrinkSKU = Pair.DrinkSKU
+            JOIN Pastries AS P ON Pair.PastrySKU = P.PastrySKU
+            WHERE D.Season = 'Fall'
             ORDER BY Price DESC;
             """,
         'query_2': '''
@@ -118,7 +113,7 @@ def run_query_get(query_type):
             FROM 
                 Sales_Item AS SI
             JOIN 
-                Menu AS M ON SI.Item = M.MenuItemSkew
+                Menu AS M ON SI.Item = M.MenuItemSKU
             WHERE 
                 M.Category = 'Breakfast'
             GROUP BY 
@@ -130,22 +125,22 @@ def run_query_get(query_type):
         'query_3': """
             SELECT 
                 (SELECT 
-                    SUM(SKEW.Price * SI.Quantity)
+                    SUM(SKU.Price * SI.Quantity)
                 FROM
                     Sales_Item AS SI
                 JOIN  
-                    Skews AS SKEW ON SI.Item = SKEW.Skew
+                    SKUs AS SKU ON SI.Item = SKU.SKU
                 JOIN 
                     Sales AS SALES ON SALES.Sale_ID = SI.Sale_ID
                 WHERE
                     YEAR(SALES.Sale_Date) = 2023) 
                 -
                 (SELECT 
-                    SUM(SKEW.Price * SI.Quantity)
+                    SUM(SKU.Price * SI.Quantity)
                 FROM
                     Sales_Item AS SI
                 JOIN  
-                    Skews AS SKEW ON SI.Item = SKEW.Skew
+                    SKUs AS SKU ON SI.Item = SKU.SKU
                 JOIN 
                     Sales AS SALES ON SALES.Sale_ID = SI.Sale_ID
                 WHERE
@@ -153,8 +148,8 @@ def run_query_get(query_type):
         """,
         'query_4': """
             SELECT B.Name AS Name, SUM(SKU.Price * SI.Quantity) AS TotalSales
-                FROM Skews AS SKU
-                JOIN Sales_Item AS SI ON SI.Item = SKU.Skew
+                FROM SKUs AS SKU
+                JOIN Sales_Item AS SI ON SI.Item = SKU.SKU
                 JOIN Sales AS S on S.Sale_ID = SI.Sale_ID
                 JOIN Baristas AS B ON B.Employee_ID = S.Employee_ID 
                 GROUP BY B.Employee_ID
@@ -175,7 +170,7 @@ def run_query_get(query_type):
         'query_6': """
         SELECT B.Name AS Name, B.Phone AS PhoneNumber, COUNT(SI.Quantity) AS CakeSold
         FROM Pastries AS P
-        JOIN Sales_Item AS SI ON SI.Item = P.PastrySkew 
+        JOIN Sales_Item AS SI ON SI.Item = P.PastrySKU 
         JOIN Sales AS S on S.Sale_ID = SI.Sale_ID
         JOIN Baristas AS B ON B.Employee_ID = S.Employee_ID
         WHERE P.PastryName = 'Vegan Carrot Cake'
@@ -185,19 +180,19 @@ def run_query_get(query_type):
         'query_7': '''
             SELECT B.Title
             FROM Books as B
-            JOIN Skews AS S ON S.Skew = B.ISBN
-            JOIN Sales_Item AS SI on SI.Item = S.Skew
+            JOIN SKUs AS S ON S.SKU = B.ISBN
+            JOIN Sales_Item AS SI on SI.Item = S.SKU
             JOIN Sales AS SAL on SAL.Sale_ID = SI.Sale_ID
             WHERE B. Genre = 'Fantasy' AND YEAR(SAL.Sale_Date) = %s;
         ''',
         'query_8': """
-            SELECT I.IngredientName AS Ingredient, COUNT(R.IngredientSkew) AS NumberOfMenuItems, Max(M.Price) AS MaxPriceMenuItem
+            SELECT I.IngredientName AS Ingredient, COUNT(R.IngredientSKU) AS NumberOfMenuItems, Max(M.Price) AS MaxPriceMenuItem
                 FROM Recipes AS R
-                JOIN Menu AS M ON R.MenuItemSkew = M.MenuItemSkew
-                JOIN Ingredients AS I ON R.IngredientSkew = I.IngredientSkew
+                JOIN Menu AS M ON R.MenuItemSKU = M.MenuItemSKU
+                JOIN Ingredients AS I ON R.IngredientSKU = I.IngredientSKU
                 GROUP BY I.IngredientName
-                HAVING COUNT(R.IngredientSkew) > 3
-                ORDER BY COUNT(R.IngredientSkew) DESC;
+                HAVING COUNT(R.IngredientSKU) > 3
+                ORDER BY COUNT(R.IngredientSKU) DESC;
         """,
         'query_9': """
         SELECT 
@@ -214,20 +209,21 @@ def run_query_get(query_type):
             Visits DESC;
         """,
         'query_10': """
-        SELECT M.Category, COUNT(M.MenuItemSkew) AS MenuItemCount, SUM(SI.Quantity) As QuantitySold, SUM(M.Price * SI.Quantity) AS TotalSales
+        SELECT M.Category, COUNT(M.MenuItemSKU) AS MenuItemCount, SUM(SI.Quantity) As QuantitySold, SUM(M.Price * SI.Quantity) AS TotalSales
             FROM Menu AS M
-            JOIN Sales_Item AS SI ON SI.Item = M.MenuItemSkew
+            JOIN Sales_Item AS SI ON SI.Item = M.MenuItemSKU
             GROUP BY M.Category
             ORDER BY M.Category;
         """
-        # Add more queries as needed
     }
-    if query_type == 'query_1':
-        season = request.args.get('season', default="Year-Round", type=str)  # Get season from the query parameter
-        query = queries[query_type]
-        result = execute_query(query, (season,))
-        return jsonify(result)
-    elif query_type == 'query_7':
+        # Add more queries as needed
+    # }
+    # if query_type == 'query_1':
+    #     season = request.args.get('season', default="Year-Round", type=str)  # Get season from the query parameter
+    #     query = queries[query_type]
+    #     result = execute_query(query, (season,))
+    #     return jsonify(result)
+    if query_type == 'query_7':
         year = request.args.get('year', default=2024, type=int)  # Get year from the query parameter
         # Validate the year
         if 2018 <= year <= 2024:
@@ -253,16 +249,16 @@ def features():
     return render_template('features.html')
 
 queries = {
-    'query_baristas': "SELECT * FROM Baristas LIMIT 10",
+    'query_baristas': "SELECT * FROM Baristas",
     'query_sales': "SELECT * FROM Sales LIMIT 10",
-    'query_skews': "SELECT * FROM Skews LIMIT 10",
+    'query_skus': "SELECT * FROM SKUs LIMIT 10",
     'query_books': "SELECT * FROM Books LIMIT 10",
-    'query_customer_loyalty': "SELECT * FROM Customer_Loyalty LIMIT 10",
-    'query_drinks': "SELECT * FROM Drinks LIMIT 10",
-    'query_ingredients': "SELECT * FROM Ingredients LIMIT 10",
-    'query_menu': "SELECT * FROM Menu LIMIT 10",
+    'query_customer_loyalty': "SELECT * FROM Customer_Loyalty",
+    'query_drinks': "SELECT * FROM Drinks",
+    'query_ingredients': "SELECT * FROM Ingredients",
+    'query_menu': "SELECT * FROM Menu",
     'query_pairs': "SELECT * FROM Pairs LIMIT 10",
-    'query_pastries': "SELECT * FROM Pastries LIMIT 10",
+    'query_pastries': "SELECT * FROM Pastries",
     'query_recipes': "SELECT * FROM Recipes LIMIT 10",
     'query_sales_items': "SELECT * FROM Sales_Item LIMIT 10"
 }
@@ -304,6 +300,36 @@ def tables():
         table_data = fetch_table_data()
 
     return render_template('tables.html', table_data=table_data, table_columns=table_columns)
+# def execute_query(query, params=None):
+#     connection = None
+#     cursor = None
+#     try:
+#         connection = get_db_connection()
+#         cursor = connection.cursor()
+
+#         # Print the query for debugging
+#         print(f"Executing query: {query} with params: {params}")
+        
+#         # Execute the query
+#         cursor.execute(query, params or ())
+        
+#         # Commit the transaction
+#         connection.commit()
+#         print("Query executed successfully!")
+        
+#         return True  # Success
+
+#     except mysql.connector.Error as err:
+#         print(f"Error: {err}")  # Print MySQL error for debugging
+#         return {"error": f"Database error: {err}"}
+#     except Exception as e:
+#         print(f"Error: {e}")  # Print general exception for debugging
+#         return {"error": f"An unexpected error occurred: {e}"}
+#     finally:
+#         if cursor:
+#             cursor.close()
+#         if connection:
+#             connection.close()
 
 def fetch_table_data():
     # Fetch data for all tables
@@ -311,7 +337,7 @@ def fetch_table_data():
     table_queries = {
         'Baristas': 'query_baristas',
         'Sales': 'query_sales',
-        'Skews': 'query_skews',
+        'SKUs': 'query_skus',
         'Ingredients': 'query_ingredients',
         'Books': 'query_books',
         'Customer_Loyalty': 'query_customer_loyalty',
@@ -379,28 +405,123 @@ def get_table_data(table_name):
         if connection:
             connection.close()
 
+@app.route('/add_data')
+def add_data():
+    # Pass the table data to the template
+    table_data = get_all_tables()  # A function that fetches your table names and image URLs
+    return render_template('add_data.html', table_data=table_data)
+
+def get_all_tables():
+    # This function returns a dictionary of table names and associated image URLs
+    return {
+        'Baristas': {'image_url': 'static/logo.png'},
+        'Ingredients': {'image_url': 'static/logo.png'},
+        'Customer_Loyalty': {'image_url': 'static/logo.png'},
+        'Menu': {'image_url': 'static/logo.png'},
+        'Drinks': {'image_url': 'static/logo.png'},
+        'Pastries': {'image_url': 'static/logo.png'}
+        }
+        # Add other tables and images here
+    
 @app.route('/add_entry/<table_name>', methods=['GET', 'POST'])
 def add_entry(table_name):
-    if request.method == 'POST':
-        # Get the form data (all fields sent in the POST request)
-        form_data = request.form.to_dict()
-        
-        # Remove table_name from form data (since it's already in the URL)
-        form_data.pop('table_name', None)
-        
-        # Build the query to insert data into the table
-        columns = ', '.join(form_data.keys())
-        values = ', '.join([f"'{v}'" for v in form_data.values()])
-        query = f"INSERT INTO {table_name} ({columns}) VALUES ({values})"
-        
-        # Execute the query (you need to define your execute_query function)
-        execute_query(query)
+    print(f"Attempting to add data to table: {table_name}")  # Debugging line
+    
+    validation_rules = {
+        "Menu": {
+            "MenuItemSKU": ['number', "sku_number"],
+            "Category": ["dropdown", ["Breakfast", "Salads, Sandwiches & Baguettes", "Tartines & Plein Bowls"]],
+            "Price": ["number", "integer_or_decimal"],
+            "ItemName": ["text", "alpha_plus"]
+        },
+        "Drinks": {
+            "DrinkSKU": ['number', "sku_number"],
+            "Item": ["text", "alpha_plus"],
+            "Price": ["number", "integer_or_decimal"],
+            "Category": ["dropdown", ["Espresso Bar", "Brew Bar", "Specialty Bar", "Seasonal Drinks"]],
+            "Season": ["dropdown", ["Year-Round", "Fall", "Spring", "Winter", "Summer"]],
+        },
+        'Baristas': {
+            "Employee_ID": ['number', "number"],  # Ensure this field exists for Barista
+            'Name': ["text", 'name_format'],
+            'Phone': ["number", "phone"]
+        },
+        "Ingredients": {
+            "IngredientSKU" : ['number', "sku_number"],
+            "Ingredient": ['text', 'alpha']
+        },
+        "Customer_Loyalty": {
+            "Loyalty_ID": ['number', "number"],
+            'Name': ["text", 'name_format'],
+            "Email": ["text", "email"],
+            "Birthday": ["date", "date"]
+                },
+        "Pastries": {
+            "PastrySKU": ['number', "sku_number"],
+            "PastryName": ["text", "alpha_plus"],
+            "Price": ["number", "integer_or_decimal"],
+            "Sell_By_Date": ["date", "date"]                
+            }
+    }
 
-        # Redirect to the tables page (or another page if needed)
+    # Get the columns for the table dynamically
+    table_columns = get_table_columns(table_name)
+
+    if request.method == 'POST':
+        # Handle form data insertion
+        form_data = request.form.to_dict()
+        print("Form Data:", form_data)  # Debugging line
+
+        # Check if 'table_name' is accidentally included in form_data
+        form_data.pop('table_name', None)  # Remove 'table_name' if it exists
+        
+        # Build insert query dynamically
+        columns = ', '.join(form_data.keys())
+        placeholders = ', '.join(['%s'] * len(form_data))  # Use placeholders to avoid SQL injection
+        query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+        
+        # Convert form data to a tuple of values
+        values = tuple(form_data[column] for column in form_data)
+        print(f"Executing query: {query} with values: {values}")  # Debugging line
+        
+        # Execute the insert query
+        result = execute_insert_query(query, values)
+
+        # Check if result is a dictionary (error)
+        if isinstance(result, dict) and "error" in result:
+            print("Error inserting data:", result["error"])  # Debugging
+        else:
+            # If the result is not an error (True for success), confirm success
+            print("Data inserted successfully!")
+
+        # Redirect after successful insertion
         return redirect(url_for('tables'))
     
-    # If it's a GET request (this part is for showing the form initially), render a confirmation page
-    return render_template('tables.html', table_data=table_data, table_columns=table_columns)
+    # Return form to the user with columns
+    return render_template('add_entry_form.html', table_name=table_name, table_columns=table_columns, validation_rules=validation_rules.get(table_name, {}))
+
+def execute_insert_query(query, params=None):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+
+        # Handle SELECT queries: fetch all results if necessary
+        if query.strip().lower().startswith("select"):
+            results = cursor.fetchall()
+            return results
+
+        # For other queries (INSERT, UPDATE, DELETE), just commit and return True
+        conn.commit()
+        return True
+
+    except mysql.connector.Error as err:
+        print(f"Error executing query: {err}")
+        return {"error": str(err)}
+
+    finally:
+        # Always close the cursor after the query is processed
+        cursor.close()
 
 @app.route('/get_table_columns/<table_name>', methods=['GET'])
 def get_columns(table_name):
@@ -446,7 +567,7 @@ def run_table_query():
     query_mapping = {
         'Baristas': 'query_baristas',
         'Sales': 'query_sales',
-        'Skews': 'query_skews',
+        'SKUs': 'query_skus',
         'Ingredients': 'query_ingredients',
         'Books': 'query_books',
         'Customer_Loyalty': 'query_customer_loyalty',

@@ -1,4 +1,4 @@
-PastrySkew,DrinkSkew,Sale_Date,Discount
+PastrySKU,DrinkSKU,Sale_Date,Discount
 457,325,2024-10-19,3
 449,308,2024-10-25,3
 413,367,2024-10-28,2

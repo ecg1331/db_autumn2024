@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Entry to {{ table_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f7f4;
+        }
+        .container {
+            padding-top: 50px;
+        }
+        .alert {
+            display: none;
+        }
+        input:invalid, select:invalid {
+            border-color: red;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-light" style="background-color: #d9593a;">
+    <!-- Navbar contents -->
+</nav>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Add Data to {{ table_name }}</h2>
+
+    <!-- Error messages -->
+    <div class="alert alert-danger" id="errorMessages"></div>
+
+    <form method="POST" action="{{ url_for('add_entry', table_name=table_name) }}" id="dataForm">
+        {% for column in table_columns %}
+            <div class="mb-3">
+                <label for="{{ column }}" class="form-label">{{ column }}</label>
+
+                {% if validation_rules[column][0] == 'dropdown' %}
+                    <select class="form-control" id="{{ column }}" name="{{ column }}" required>
+                        {% for option in validation_rules[column][1] %}
+                            <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                {% elif validation_rules[column][1] == 'integer_or_decimal' %}
+                    <input type="text" class="form-control" id="{{ column }}" name="{{ column }}" pattern="^\d+(\.\d+)?$" title="Enter a valid number (integer or decimal)" required>
+                {% elif validation_rules[column][1] == 'number' %}
+                    <input type="number" class="form-control" id="{{ column }}" name="{{ column }}" required>
+                {% elif validation_rules[column][1] == 'phone' %}
+                    <input type="tel" class="form-control" id="{{ column }}" name="{{ column }}" pattern="^\+?[0-9\s\(\)-]+$" title="Enter a valid phone number" required>
+                {% elif validation_rules[column][1] == 'name_format' %}
+                    <input type="text" class="form-control" id="{{ column }}" name="{{ column }}" pattern="^[A-Z][a-z]+(?: [A-Z][a-z]+)+$" title="Only letters and spaces allowed" required>
+                {% elif validation_rules[column][1] == 'date' %}
+                    <input type="text" class="form-control" id="{{ column }}" name="{{ column }}" pattern="^\d{4}-\d{2}-\d{2}$" title="YYYY-MM-DD" required>
+                {% elif validation_rules[column][1] == 'sku_number' %}
+                    <input type="text" class="form-control" id="{{ column }}" name="{{ column }}" pattern="^[1-9]\d{2}$" title="3 digit number" required>
+                {% elif validation_rules[column][1] == 'alpha' %}
+                    <input type="text" class="form-control" id="{{ column }}" name="{{ column }}" pattern="^[a-zA-z][a-zA-Z ]+[a-zA-Z]" title="3 digit number" required>
+                {% elif validation_rules[column][1] == 'alpha_plus' %}
+                    <input type="text" class="form-control" id="{{ column }}" name="{{ column }}" pattern="^[a-zA-Z](?:[a-zA-Z'` ]*[a-zA-Z])?$" title="Letters, apostrophes, and spaces allowed" required>
+
+                {% elif validation_rules[column][1] == 'email' %}
+                    <input type="email" class="form-control" id="{{ column }}" name="{{ column }}" required>
+                {% else %}
+                    <input type="text" class="form-control" id="{{ column }}" name="{{ column }}" required>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.getElementById('dataForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission until validation is complete
+        let formValid = true;
+        let errorMessages = [];
+
+        {% for column in table_columns %}
+            var colName = '{{ column }}';
+            var value = document.getElementById(colName).value.trim(); // .trim() to remove leading/trailing spaces
+            var validationRule = {{ validation_rules[column]|tojson }};
+            
+            // Dropdown validation
+            if (validationRule[0] == "dropdown") {
+                if (!value) {
+                    errorMessages.push(colName + ": Please select a valid option.");
+                    formValid = false;
+                }
+            } else {
+                // Text-based field validations
+                if (validationRule[1] == "name_format") {
+                    const namePattern = /^[A-Z][a-z]+(?: [A-Z][a-z]+)+$/;
+                    if (!namePattern.test(value)) {
+                        errorMessages.push(colName + ": Name must be a full name with proper capitalization. Only Jr., Sr., Dr., etc., are allowed as punctuation.");
+                        formValid = false;
+                    }
+                } else if (validationRule[1] == "integer_or_decimal") {
+                    // Validate prices (integer or decimal)
+                    if (!/^\d+(\.\d{1,2})?$/.test(value)) {
+                        errorMessages.push(colName + ": Price must be a valid number, with at most two decimal places.");
+                        formValid = false;
+                    }
+                } else if (validationRule[1] == "date") {
+                    // Validate date (e.g., Birthday)
+                    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                        errorMessages.push(colName + ": Please enter a valid date (YYYY-MM-DD).");
+                        formValid = false;
+                    }
+                } else if (validationRule[1] == "number") {
+                    // Validate integer ID fields
+                    if (!Number.isInteger(Number(value)) || value.trim() === "") {
+                        errorMessages.push(colName + ": ID must be a valid integer.");
+                        formValid = false;
+                    }
+                } else if (validationRule[1] == "phone") {
+                    // Validate phone number format (XXX-XXX-XXXX)
+                    if (!/^\d{3}-\d{3}-\d{4}$/.test(value)) {
+                        errorMessages.push(colName + ": Please enter a valid phone number (XXX-XXX-XXXX).");
+                        formValid = false;
+                    }
+                }
+                else if (validationRule[1] == "sku_number") {
+                    sku_pattern = /^[1-9]\d{2}$/;
+                    if (sku_pattern.test(value)) {
+                        errorMessages.push(colName + ": Please enter a SKU number XXX.");
+                        formValid = false;
+                    }
+                }
+                else if (validationRule[1] == "alpha") {
+                    sku_pattern = /^[a-zA-z][a-zA-Z ]+[a-zA-Z]/;
+                    if (sku_pattern.test(value)) {
+                        errorMessages.push(colName + ": Please enter a string that only contains letters and spaces.");
+                        formValid = false;
+                    }
+                }
+                else if (validationRule[1] == "alpha_plus") {
+                    sku_pattern = /^[a-zA-Z](?:[a-zA-Z'` "]*[a-zA-Z])?$/;
+                    if (sku_pattern.test(value)) {
+                        errorMessages.push(colName + ": Please enter a string that starts and ends with letters!");
+                        formValid = false;
+                    }
+                }
+                else if (validationRule[1] == "email") {
+                    // Custom email validation (if needed) for specific cases
+                    const emailInput = document.getElementById(colName);
+                    if (!emailInput.checkValidity()) {
+                        errorMessages.push(colName + ": Please enter a valid email address.");
+                        formValid = false;
+                    }
+                
+            }
+
+
+        {% endfor %}
+        
+        if (!formValid) {
+            document.getElementById('errorMessages').innerHTML = errorMessages.join('<br>');
+            document.getElementById('errorMessages').style.display = 'block';
+        } else {
+            // Submit the form if everything is valid
+            document.getElementById('dataForm').submit();
+        }
+    });
+</script>
+
+</body>
+</html>

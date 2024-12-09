@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f7f4;
+        }
+
+        /* Navbar styling */
+        .navbar-toggler-icon span {
+            background-color: #f7f7f4;
+        }
+
+        /* Feature card styles */
+        .feature-card {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            padding: 30px;
+            height: 250px;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-card h4 {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 40px 0;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-light" style="background-color: #d9593a; padding-top: 1px; padding-bottom: 1px;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#" style="padding-top: 0px; padding-bottom: 0px;">
+            <!-- Logo -->
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('home') }}">
+                        <i class="bi bi-house-door"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('features') }}">
+                        <i class="bi bi-search"></i> Query Menu
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('tables') }}">
+                        <i class="bi bi-table"></i> Tables
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">
+                        <i class="bi bi-info-circle"></i> About
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('add_data') }}">
+                        <i class="bi bi-house-door"></i> Add Data
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Feature Cards Section -->
+<section id="add-data" class="container">
+    <h2 class="text-center my-5">Add Data to Tables</h2>
+    <div class="card-container">
+        <!-- Loop over tables to create cards -->
+        {% for table_name in table_data.keys() %}
+        <a href="{{ url_for('add_entry', table_name=table_name) }}" class="card-link">
+            <div class="feature-card" style="background-image: url('{{ table_data[table_name].image_url }}');">
+                <h4>{{ table_name }}</h4>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
