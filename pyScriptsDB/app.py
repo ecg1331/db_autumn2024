@@ -414,12 +414,12 @@ def add_data():
 def get_all_tables():
     # This function returns a dictionary of table names and associated image URLs
     return {
-        'Baristas': {'image_url': 'static/logo.png'},
-        'Ingredients': {'image_url': 'static/logo.png'},
-        'Customer_Loyalty': {'image_url': 'static/logo.png'},
-        'Menu': {'image_url': 'static/logo.png'},
-        'Drinks': {'image_url': 'static/logo.png'},
-        'Pastries': {'image_url': 'static/logo.png'}
+        'Baristas': {'image_url': 'static/cat_wash.jpg'},
+        'Ingredients': {'image_url': 'static/cat_plant.jpg'},
+        'Customer_Loyalty': {'image_url': 'static/cat_knit.jpg'},
+        'Menu': {'image_url': 'static/cat_table.jpg'},
+        'Drinks': {'image_url': 'static/cat_sleep.jpg'},
+        'Pastries': {'image_url': 'static/cat_cake.jpg'}
         }
         # Add other tables and images here
     
