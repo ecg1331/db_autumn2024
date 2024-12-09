@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for
+
 import mysql.connector
 import re
 
@@ -267,39 +269,65 @@ queries = {
 
 
 # Features page route
-@app.route('/tables')
+@app.route('/tables', methods=['GET', 'POST'])
 def tables():
-    # List of tables and their predefined query keys
+    table_data = {}
+    table_columns = {}
+
+    # Handle form submission
+    if request.method == 'POST':
+        # Get the table name and data from the form
+        table_name = request.form.get('table_name')
+        form_data = {key: request.form[key] for key in request.form if key != 'table_name'}
+
+        # Dynamically generate the INSERT query based on the table and form data
+        columns = get_table_columns(table_name)
+        placeholders = ', '.join(['%s'] * len(form_data))
+        query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({placeholders})"
+        params = tuple(form_data[column] for column in columns)
+        table_data = get_tables()  # This should return a list of table names, not a Response object
+        # Ensure that the function returns a list
+        if not isinstance(table_data, list):
+            raise TypeError("Expected a list of table names, but got something else.")
+        
+        # Get columns for each table
+        table_columns = {table_name: get_table_columns(table_name) for table_name in table_data}
+        
+        # Execute the insert query
+        result = execute_query(query, params)
+
+        # Optionally, refresh table data after insertion
+        table_data = fetch_table_data()
+
+    else:
+        # Fetch table data and columns if no form submission
+        table_data = fetch_table_data()
+
+    return render_template('tables.html', table_data=table_data, table_columns=table_columns)
+
+def fetch_table_data():
+    # Fetch data for all tables
+    table_data = {}
     table_queries = {
         'Baristas': 'query_baristas',
         'Sales': 'query_sales',
         'Skews': 'query_skews',
+        'Ingredients': 'query_ingredients',
         'Books': 'query_books',
         'Customer_Loyalty': 'query_customer_loyalty',
-        'Drinks': 'query_drinks',
-        'Ingredients': 'query_ingredients',
         'Menu': 'query_menu',
         'Pairs': 'query_pairs',
-        'Pastries': 'query_pastries',
         'Recipes': 'query_recipes',
-        'Sales_Items': 'query_sales_items'
+        'Drinks': 'query_drinks',
+        'Sales_Item': 'query_sales_items',
+        'Pastries': 'query_pastries'
     }
 
-    # Query results for each table
-    table_data = {}
     for table_name, query_key in table_queries.items():
         if query_key in queries:
             result = execute_query(queries[query_key])
-            print(f"Result for {table_name}: {result}")  # Debugging print
-            if result:
-                table_data[table_name] = result
-            else:
-                table_data[table_name] = {"error": "No data found for this table."}
-        else:
-            table_data[table_name] = {"error": "Query not defined."}
-
-    return render_template('tables.html', table_data=table_data)
-
+            table_data[table_name] = result
+    return table_data
 
 def get_table_columns(table_name):
     connection = get_db_connection()
@@ -353,9 +381,26 @@ def get_table_data(table_name):
 
 @app.route('/add_entry/<table_name>', methods=['GET', 'POST'])
 def add_entry(table_name):
-    # Add logic to handle the "Add Entry" form
-    # You could render a form to add a new entry to the specified table
-    return render_template('add_entry.html', table_name=table_name)
+    if request.method == 'POST':
+        # Get the form data (all fields sent in the POST request)
+        form_data = request.form.to_dict()
+        
+        # Remove table_name from form data (since it's already in the URL)
+        form_data.pop('table_name', None)
+        
+        # Build the query to insert data into the table
+        columns = ', '.join(form_data.keys())
+        values = ', '.join([f"'{v}'" for v in form_data.values()])
+        query = f"INSERT INTO {table_name} ({columns}) VALUES ({values})"
+        
+        # Execute the query (you need to define your execute_query function)
+        execute_query(query)
+
+        # Redirect to the tables page (or another page if needed)
+        return redirect(url_for('tables'))
+    
+    # If it's a GET request (this part is for showing the form initially), render a confirmation page
+    return render_template('tables.html', table_data=table_data, table_columns=table_columns)
 
 @app.route('/get_table_columns/<table_name>', methods=['GET'])
 def get_columns(table_name):

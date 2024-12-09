@@ -13,17 +13,10 @@
 
     <style>
 
-        
-    
-        .custom-list-group {
-            background-color: #f7f7f4; 
-        }
-
-        .h1 {
-            font-weight: bold;
-        }
-        .custom-list-group .list-group-item:hover {
-            background-color: #dededc; 
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;  /* Include padding and border in the total width/height */
         }
 
         
@@ -68,6 +61,14 @@
             font-size: 3rem;
             color: #d9593a;  /* Change this to your desired hex color */
         }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;  /* Ensure the body occupies full width */
+            overflow-x: hidden;  /* Prevent horizontal overflow */
+        
+        }
 
         .feature-card-title {
             font-size: 1.5rem;
@@ -110,8 +111,9 @@
         
         .navbar {
             background-color: #f7f7f4; /* Navbar background color */  /* Ensure no top padding in the navbar */
-            padding-bottom: 5; /* Remove bottom padding of navbar */
-            padding-top: 5;
+            padding-bottom: 1px; /* Remove bottom padding of navbar */
+            padding-top: 0px !important;
+            margin-bottom: 0px;
         }
 
         /* Set the text and icon color to #f7f7f4 */
@@ -119,7 +121,7 @@
         .navbar .nav-link, 
         .navbar-toggler-icon,
         .navbar .nav-item i {
-            color:  #d9593a !important; /* Override text and icon color */
+            color:  #f7f7f4 !important; /* Override text and icon color */
         }
 
         body {
@@ -137,6 +139,8 @@
             padding-top: 0px;
             padding-bottom: 0px;
             margin-bottom: 0; /* Ensure no bottom margin */
+            position: relative;  /* Ensure it is positioned correctly */
+            z-index: 1050; 
 
         }
     
@@ -182,8 +186,11 @@
         /* Individual waffle squares (bars) */
         .navbar-toggler-icon span {
             display: block;
-            background-color: #d9593a; /* Waffle square color */
-            border-radius: 2px;         /* Slightly rounded corners */
+            background-color: #f7f7f4; /* Waffle square color */
+            border-radius: 0px;         /* Slightly rounded corners */
+            border-color:  #62B4BB;
+            z-index: 1060;  /* Ensures the icon stays above the carousel */
+
         }
 
         /* Square size adjustments */
@@ -229,16 +236,17 @@
 
         /* Hover effect for the toggle button */
         .navbar-toggler:hover {
-            background-color: #d9593a; /* Button background change on hover */
+            background-color:  #62B4BB; /* Button background change on hover */
         }
         /* Feature Card Container - Grid Layout */
 
     .navbar .navbar-brand,
         .navbar .nav-link,
         .navbar-toggler-icon span {
-            color: #d9593a !important; /* Text and icon color to white */
+            color: #f7f7f4; !important; /* Text and icon color to white */
         }
 
+    
         body {
             margin: 0;
             padding: 0;
@@ -250,19 +258,25 @@
         /* Carousel Container */
         #tableCarousel {
             width: 100vw; /* Full viewport width */
-            background-color: #62B4BB; /* Match with the navbar background color */
+            background-color: #d9593a; /* Match with the navbar background color */
             border-radius: 0 0 30px 30px; /* Rounded corners at the bottom */
             overflow: hidden; /* Ensure no overflow outside rounded corners */
             position: relative;
-            padding-bottom: 20px; /* Space for rounded edges at the bottom */
-            margin-top: 0px; /* Ensure it sticks directly under the navbar */
+            margin-top: 0 px ; /* Ensure it sticks directly under the navbar */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for a better effect */
+            margin-top: 0px;  /* Adjust this value to create more space */
+            z-index: 100;  /* Ensure it stays above other elements */
+
+        
 
                 }
     
         /* Carousel Item */
         .carousel-inner {
             width: 100%;
+            color:#f7f7f4;
+            padding-top: 30px;  /* Adjust the space between the top of the carousel and the items */
+            margin: 0px
         }
     
         .carousel-item {
@@ -271,6 +285,8 @@
             display: flex;
             justify-content: center; /* Center the content horizontally */
             align-items: center;     /* Center the content vertically */
+            padding: 20px;  /* Padding for table content */
+
         }
         .carousel-item {
             display: flex;
@@ -278,6 +294,7 @@
             align-items: center;
             padding: 20px; /* Add padding around the carousel item */
             text-align: center; /* Center the text */
+            padding-top: 0 px;
         }
         
         .carousel-table-content {
@@ -311,18 +328,18 @@
 
         /* Optional: Style the table header */
         .carousel-item th {
-            background-color: #62B4BB; /* Add a background color to the header */
-            color: white; /* Text color of the header */
+            background-color: #d9593a; /* Add a background color to the header */
+            color: #f7f7f4; /* Text color of the header */
             font-weight: bold; /* Make header text bold */
         }
     
         .carousel-caption {
-            color: white;
+            color: #f7f7f4;
         }
     
         /* Make Carousel full height to fill screen */
         #tableCarousel {
-            min-height: 50vh; /* This can be adjusted based on how much space you want to give to the carousel */
+            min-height: 85vh; /* This can be adjusted based on how much space you want to give to the carousel */
         }
     
         /* Adjust the rounded corners below the carousel */
@@ -344,25 +361,40 @@
             margin-top:0px;
 
         }
-    
+        section#tables {
+            margin-top: 0; /* Remove top margin */
+            padding-top: 0; /* Remove top padding */
+        }
+        
+        
+        .table, .table th, .table td {
+            color: #f7f7f4; /* Set text color */
+        }
         /* Additional Styling for Table Content */
         .table {
             border-radius: 10px;
             overflow: hidden;
             margin-top: 0px;
         }
-
+        
+        .table th {
+            color: #f7f7f4; /* Ensure header text is also the same color */
+        }
         #tables {
             padding-top: 0px;
         }
         
+        .table tbody tr:hover {
+            background-color: #62B4BB; /* A nice hover effect to highlight rows */
+            color: #f7f7f4; /* Ensure the text color remains the same on hover */
+        }
         .carousel-inner img {
             border-radius: 0 0 30px 30px;
         }
         
         .carousel-control-prev-icon,
         .carousel-control-next-icon {
-            background-color: #62B4BB;
+            background-color: #d9593a;
         }
     
         /* Styling for Go Back and Add Entry Buttons */
@@ -374,7 +406,9 @@
             margin-top:0px;
 
         }
-        
+        #text-center {
+            color:#f7f7f4;
+        }
         body {
             margin: 0; /* Remove all body margin */
             padding: 0; /* Remove any padding from the body */
@@ -385,25 +419,67 @@
             padding-right: 0;
             margin-left: 0;
             margin-right: 0;
+            padding-top: 0 !important;  /* Force padding to 0 */
+            margin-top: 0 !important; 
+        }
+        
+        .container.my-5, #tables, .carousel-item {
+            padding-top: 0px;
+            margin-top: 0px;
+        }
+        
+        .navbar-nav {
+            margin-left: auto !important; /* Override any other margin properties */
+        }
+        
+        /* Ensure no padding in the navbar */
+        .navbar-collapse {
+            padding: 0 !important; /* Reset any unwanted padding */
+        }
+        
+        /* Optional: Align the waffle icon (navbar-toggler) */
+        .navbar-toggler {
+            margin-left: auto !important; /* Align the hamburger icon (waffle) to the right */
         }
         
         
+        .carousel-indicators button {
+            margin-top: 0px;
+            margin-bottom: -17px; 
+            background-color: #f7f7f4; /* Dot color */
+            border: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        
+        .carousel-indicators .active {
+            background-color: #62B4BB; /* Active dot color */
+        }
+        
+        .carousel-indicators button:hover {
+            background-color: #EF9684; /* Hover color */
+        }
+        
+
         </style>
                         
 
 </head>
-<body style="background-color: #f7f7f4;">
+<body style="background-color: #62B4BB;">
 
     <!-- Navbar -->
 
         <!-- Navbar -->
-        <nav class="navbar navbar-light" style="background-color:#62B4BB; padding-top: 1px; padding-bottom: 1px;">
+        <nav class="navbar navbar-light" style="background-color: #d9593a; padding-top: 1px; padding-bottom: 1px;">
             <div class="container-fluid">
                 <!-- Brand or Logo -->
                 <a class="navbar-brand" href="#" style="padding-top: 0px; padding-bottom: 0px;">
+                    <!-- Logo or Brand here -->
                 </a>
-        
-                <!-- Toggle Button for Mobile and Desktop View (always visible) -->
+            
+                <!-- Toggle Button for Mobile and Desktop View -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon">
                         <!-- 9 Squares for Waffle Icon -->
@@ -422,25 +498,22 @@
                 <!-- Navbar Links (Hidden by default, shown on toggle) -->
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <!-- Query Menu Link -->
+                        <!-- Navbar items here -->
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('home') }}">
                                 <i class="bi bi-house-door"></i> Home
                             </a>
                         </li>
-    
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('features') }}">
                                 <i class="bi bi-search"></i> Query Menu
                             </a>
                         </li>
-                        <!-- Tables Link -->
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('tables') }}">
                                 <i class="bi bi-table"></i> Tables
                             </a>
                         </li>
-                        <!-- About Link -->
                         <li class="nav-item">
                             <a class="nav-link" href="#about">
                                 <i class="bi bi-info-circle"></i> About
@@ -450,13 +523,19 @@
                 </div>
             </div>
         </nav>
-                                         
+                                                 
 
 <!-- Feature Cards for Each Table -->
 <section id="tables" class="container my-5" >
     <!-- Carousel displaying 3-4 tables (Main Feature) -->
     <div class="container mt-5" >
-        <div id="tableCarousel" class="carousel slide" data-bs-ride="carousel" style="background-color: #62B4BB;">
+        <div id="tableCarousel" class="carousel slide" data-bs-ride="false">
+            <div class="carousel-indicators">
+                {% for table_name, results in table_data.items() %}
+                    <button type="button" data-bs-target="#tableCarousel" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ loop.index0 }}"></button>
+                {% endfor %}
+            </div>
+        
             <div class="carousel-inner">
                 {% for table_name, results in table_data.items() %}
                     <!-- Carousel item for each table -->
@@ -489,6 +568,8 @@
                     </div>
                 {% endfor %}
             </div>
+            
+            
         
             <!-- Carousel controls -->
             <button class="carousel-control-prev" type="button" data-bs-target="#tableCarousel" data-bs-slide="prev">
