@@ -12,7 +12,8 @@ def get_db_connection():
         host='localhost',
         database='MyCoffeeShop'
     )
-    
+
+
 def execute_query(query, params=None):
     connection = None
     cursor = None
@@ -243,6 +244,7 @@ def run_query_get(query_type):
 def home():
     return render_template('index.html')
 
+
 # Features page route
 @app.route('/features')
 def features():
@@ -260,35 +262,116 @@ queries = {
     'query_pairs': "SELECT * FROM Pairs LIMIT 10",
     'query_pastries': "SELECT * FROM Pastries LIMIT 10",
     'query_recipes': "SELECT * FROM Recipes LIMIT 10",
-    'query_sales_items': "SELECT * FROM Ingredients LIMIT 10"
+    'query_sales_items': "SELECT * FROM Sales_Item LIMIT 10"
 }
+
 
 # Features page route
 @app.route('/tables')
 def tables():
-    # List of tables and their predefined queries
+    # List of tables and their predefined query keys
     table_queries = {
         'Baristas': 'query_baristas',
         'Sales': 'query_sales',
         'Skews': 'query_skews',
-        'Ingredients': 'query_ingredients',
         'Books': 'query_books',
         'Customer_Loyalty': 'query_customer_loyalty',
+        'Drinks': 'query_drinks',
+        'Ingredients': 'query_ingredients',
         'Menu': 'query_menu',
         'Pairs': 'query_pairs',
+        'Pastries': 'query_pastries',
         'Recipes': 'query_recipes',
         'Sales_Items': 'query_sales_items'
-        
-        # Add other tables here
     }
 
     # Query results for each table
     table_data = {}
     for table_name, query_key in table_queries.items():
-        result = execute_query(queries[query_key])
-        table_data[table_name] = result  # Store result by table name
+        if query_key in queries:
+            result = execute_query(queries[query_key])
+            print(f"Result for {table_name}: {result}")  # Debugging print
+            if result:
+                table_data[table_name] = result
+            else:
+                table_data[table_name] = {"error": "No data found for this table."}
+        else:
+            table_data[table_name] = {"error": "Query not defined."}
 
     return render_template('tables.html', table_data=table_data)
+
+
+def get_table_columns(table_name):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute(f"SHOW COLUMNS FROM {table_name}")
+    columns = cursor.fetchall()
+
+    connection.close()
+
+    # Extract column names
+    column_names = [column[0] for column in columns]  # column[0] is the column name
+
+    return column_names
+def get_table_data(table_name):
+    try:
+        # Establish the database connection
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        # Define the query to fetch all data from the specified table
+        query = f"SELECT * FROM {table_name}"
+
+        # Execute the query
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+        # Get the column names from the cursor description
+        columns = [column[0] for column in cursor.description]
+
+        # Convert the rows into a list of dictionaries
+        result_dict = []
+        for row in result:
+            row_dict = {}
+            for i, column in enumerate(columns):
+                row_dict[column] = row[i]  # Map column name to its value in the row
+            result_dict.append(row_dict)
+
+        return result_dict  # Return the list of dictionaries
+
+    except mysql.connector.Error as err:
+        return {"error": f"Database error: {err}"}
+    except Exception as e:
+        return {"error": f"An unexpected error occurred: {e}"}
+    finally:
+        # Close the cursor and connection
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+@app.route('/add_entry/<table_name>', methods=['GET', 'POST'])
+def add_entry(table_name):
+    # Add logic to handle the "Add Entry" form
+    # You could render a form to add a new entry to the specified table
+    return render_template('add_entry.html', table_name=table_name)
+
+@app.route('/get_table_columns/<table_name>', methods=['GET'])
+def get_columns(table_name):
+    columns = get_table_columns(table_name)
+    return jsonify(columns)
+
+@app.route('/view_table/<table_name>', methods=['GET'])
+def view_table(table_name):
+    # Fetch the table columns and data from your database or query
+    table_columns = get_table_columns(table_name)
+    table_data = get_table_data(table_name)
+    
+    return render_template('tables.html', 
+                           table_name=table_name, 
+                           table_columns=table_columns, 
+                           table_data=table_data)
 
 @app.route('/get_tables', methods=['GET'])
 def get_tables():
@@ -319,12 +402,22 @@ def run_table_query():
         'Baristas': 'query_baristas',
         'Sales': 'query_sales',
         'Skews': 'query_skews',
-        # Add more tables here
+        'Ingredients': 'query_ingredients',
+        'Books': 'query_books',
+        'Customer_Loyalty': 'query_customer_loyalty',
+        'Menu': 'query_menu',
+        'Pairs': 'query_pairs',
+        'Recipes': 'query_recipes',
+        'Drinks': 'query_drinks',
+        'Sales_Item': 'query_sales_items',
+        'Pastries': 'query_pastries'  # Add Pastries query mapping here
+
     }
 
     if table_name in query_mapping:
         query_key = query_mapping[table_name]
         result = execute_query(queries[query_key])
+        table_columns = get_table_columns(table_name)
         return render_template('tables.html', table_data={table_name: result})
     else:
         return jsonify({"error": f"Query for table '{table_name}' not defined."}), 400

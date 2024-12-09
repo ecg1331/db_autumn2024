@@ -121,3 +121,22 @@
             <!-- Dropdown will be populated dynamically -->
         </select>
     </div>
+
+
+
+    <!-- Tables Secion-->
+<section id="tables" class="container my-5">
+    <h1 class="text-center">Tables</h1>
+    
+    <form action="/run_query" method="get">
+        <div class="mb-3">
+            <label for="tableSelect" class="form-label">Select Table</label>
+            <select class="form-select" id="tableSelect" name="table_name">
+                {% for table in table_names %}
+                    <option value="{{ table }}">{{ table }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Run Query</button>
+    </form>
+    
