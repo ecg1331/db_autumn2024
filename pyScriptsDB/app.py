@@ -448,7 +448,7 @@ def add_entry(table_name):
         },
         "Ingredients": {
             "IngredientSKU" : ['number', "sku_number"],
-            "Ingredient": ['text', 'alpha']
+            "IngredientName": ['text', 'alpha']
         },
         "Customer_Loyalty": {
             "Loyalty_ID": ['number', "number"],

@@ -6,6 +6,8 @@
     <title>Add Entry to {{ table_name }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
         body {
             background-color: #f7f7f4;
@@ -29,9 +31,9 @@
         /* Individual waffle squares (bars) */
         .navbar-toggler-icon span {
             display: block;
-            background-color: #d9593a; /* Waffle square color */
+            background-color: #f7f7f4; /* Waffle square color */
             border-radius: 0px; 
-            border-color:  #d9593a; /* Slightly rounded corners */
+            border-color:  #f7f7f4; /* Slightly rounded corners */
         }
 
         /* Square size adjustments */
@@ -51,8 +53,8 @@
             height: 30px; /* Total height of the button */
             background-color: transparent; /* Transparent background */
             position: relative; /* Allow positioning */
-            top: 5px; /* Shift button down slightly */
-            left: -5px; /* Shift button left slightly */
+            top: 0px; /* Shift button down slightly */
+            left: 0px; /* Shift button left slightly */
         }
 
         /* Adjust the appearance when the hamburger is clicked */
@@ -85,7 +87,7 @@
         .navbar .nav-link, 
         .navbar-toggler-icon,
         .navbar .nav-item i {
-            color:  #d9593a !important; /* Override text and icon color */
+            color:  #f7f7f4 !important; /* Override text and icon color */
         }
 
 
@@ -93,16 +95,18 @@
             padding-top: 50px;
         }
 
+
         .header {
             position: relative;
             background-image: url('{{ url_for('static',filename=table_data[table_name].image_url.replace("static", "")) }}'); /* Placeholder for the image URL */
             background-size: cover;
             background-position: center;
-            height: 300px;
+            height: 500px;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             text-align: center;
             color: #f7f7f4;
+            background-color: #f7f7f4;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -113,10 +117,13 @@
 
         .header h1 {
             text-transform: uppercase;
-            font-weight: bold;
+            font-weight: 900;
             font-size: 36px;
             position: absolute;
             top: 10px;
+            text-shadow: 
+            3px 3px 10px rgba(0, 0, 0, 0.6);  /* Stronger shadow with blur */
+        
 
         }
 
@@ -127,8 +134,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.3); /* Dark overlay for text contrast */
-            border-radius: 20px;
+
         }
 
         .form-container {
@@ -143,8 +149,9 @@
 
         .form-control {
             border-radius: 5px;
-            border-color: #62B4BB;
+            border-color: #d9593a;
             transition: border-color 0.3s ease;
+            border: 1px solid #d9593a;
         }
 
         .form-control:focus {
@@ -223,10 +230,10 @@
 
 <!-- Navbar -->
         <!-- Navbar -->
-        <nav class="navbar navbar-light" style="background-color:#f7f7f4; padding-top: 1px; padding-bottom: 1px;">
+        <nav class="navbar navbar-light" style="background-color:#d9593a; padding-top: 1px; padding-bottom: 1px;">
             <div class="container-fluid">
                 <!-- Brand or Logo -->
-                <a class="navbar-brand" href="#" style="padding-top: 0px; padding-bottom: 0px;">
+                <a class="navbar-brand" href="#" style="padding-top: 0px; padding-bottom: 5px;">
                 </a>
         
                 <!-- Toggle Button for Mobile and Desktop View (always visible) -->
@@ -367,11 +374,15 @@
                         formValid = false;
                     }
                 } else if (validationRule[1] == "date") {
-                    // Validate date (e.g., Birthday)
-                    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                    const date = value.trim(); // Remove leading/trailing spaces
+                    const dateObj = new Date(date); // Try to create a Date object
+                    
+                    // Check if the date object is valid and if the string exactly matches the date format
+                    if (isNaN(dateObj.getTime()) || date !== dateObj.toISOString().split('T')[0]) {
                         errorMessages.push(colName + ": Please enter a valid date (YYYY-MM-DD).");
                         formValid = false;
                     }
+                }
                 } else if (validationRule[1] == "number") {
                     // Validate integer ID fields
                     if (!Number.isInteger(Number(value)) || value.trim() === "") {
@@ -387,21 +398,21 @@
                 }
                 else if (validationRule[1] == "sku_number") {
                     sku_pattern = /^[1-9]\d{2}$/;
-                    if (sku_pattern.test(value)) {
+                    if (!sku_pattern.test(value)) {
                         errorMessages.push(colName + ": Please enter a SKU number XXX.");
                         formValid = false;
                     }
                 }
                 else if (validationRule[1] == "alpha") {
-                    sku_pattern = /^[a-zA-z][a-zA-Z ]+[a-zA-Z]/;
-                    if (sku_pattern.test(value)) {
+                    alpha_pattern = /^[a-zA-z][a-zA-Z ]+[a-zA-Z]/;
+                    if (!alpha_pattern.test(value)) {
                         errorMessages.push(colName + ": Please enter a string that only contains letters and spaces.");
                         formValid = false;
                     }
                 }
                 else if (validationRule[1] == "alpha_plus") {
-                    sku_pattern = /^[a-zA-Z](?:[a-zA-Z'` "]*[a-zA-Z])?$/;
-                    if (sku_pattern.test(value)) {
+                    alpha_plus_pattern = /^[a-zA-Z](?:[a-zA-Z'` "]*[a-zA-Z])?$/;
+                    if (!alpha_plus_pattern.test(value)) {
                         errorMessages.push(colName + ": Please enter a string that starts and ends with letters!");
                         formValid = false;
                     }
