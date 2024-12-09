@@ -853,3 +853,64 @@
 </script>
 </body>
 </html>
+<section id="tables" class="container my-5" >
+    <!-- Carousel displaying 3-4 tables (Main Feature) -->
+    <div class="container mt-5" >
+        <div id="tableCarousel" class="carousel slide" data-bs-ride="false">
+            <div class="carousel-indicators">
+                {% for table_name, results in table_data.items() %}
+                    <button type="button" data-bs-target="#tableCarousel" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ loop.index0 }}"></button>
+                {% endfor %}
+            </div>
+        
+            <div class="carousel-inner">
+                {% for table_name, results in table_data.items() %}
+                    <!-- Carousel item for each table -->
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <div class="carousel-table-content">
+                            <h4 class="text-center">{{ table_name }}</h4>
+                            {% if results is not none and results != [] %}
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            {% for column, value in results[0].items() %}
+                                                <th>{{ column }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in results %}
+                                            <tr>
+                                                {% for column, value in row.items() %}
+                                                    <td>{{ value }}</td>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>No data available for {{ table_name }}.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            
+        
+            <!-- Carousel controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#tableCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#tableCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        </div>
+
+
+
+
+</section>

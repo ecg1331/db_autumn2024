@@ -88,6 +88,8 @@
         .navbar-toggler-icon,
         .navbar .nav-item i {
             color:  #f7f7f4 !important; /* Override text and icon color */
+            font-family: 'Roboto', sans-serif; /* Font family */
+
         }
 
 
@@ -113,6 +115,8 @@
             text-transform: uppercase;
             font-size: 2.5rem;
             font-weight: bold;
+            font-family: 'Roboto', sans-serif; /* Font family */
+
         }
 
         .header h1 {
@@ -121,6 +125,7 @@
             font-size: 36px;
             position: absolute;
             top: 10px;
+            font-family: 'Roboto', sans-serif; /* Font family */
             text-shadow: 
             3px 3px 10px rgba(0, 0, 0, 0.6);  /* Stronger shadow with blur */
         
@@ -159,10 +164,56 @@
             box-shadow: 0 0 5px rgba(217, 89, 58, 0.8); /* Subtle glow effect */
         }
 
-        .alert {
-            display: none;
-        }
+        .alert-danger {
+            display: none; /* Still hidden by default */
+            background-color: #f8d7da; 
+            color: #842029; 
+            border: 1px solid #f5c6cb; 
+            border-radius: 5px; 
+            padding: 15px; 
+            margin-top: 15px; 
+            font-size: 1rem; 
+            position: relative; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            justify-content: center; 
+            align-items: center;    
+            height: 100%;
+            font-family: 'Roboto', sans-serif; /* Font family */
 
+
+        }
+        
+        .alert-danger .alert-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px; 
+            color: #842029; 
+        }
+        
+        .alert-danger p {
+            margin-left: 30px; 
+        }
+        
+        /* Ensure the alert appears smoothly when shown */
+        .alert-danger.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         .btn-primary {
             background-color: #d9593a;
             border-color: #d9593a;
@@ -177,12 +228,16 @@
             background-color: #d9593a;
             border-color: #d9593a;
             color: #f7f7f4;
+            font-weight: bold;
             width: 100%;
+            font-family: 'Roboto', sans-serif; /* Font family */
+
         }
 
         .submit-btn:hover {
             background-color: #d2522d;
             border-color: #d2522d;
+            color: #f7f7f4;
         }
 
         input:invalid, select:invalid {
@@ -222,7 +277,12 @@
         input[type="submit"]:hover {
             background-color: #c7492a;
         }
-
+        .alert {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center;     /* Center vertically */
+            height: 100%;            /* Ensure the alert has full height */
+        }
 
     </style>
 </head>
@@ -298,9 +358,14 @@
 <!-- Form Section -->
 <div class="container form-container">
 
-    <!-- Error messages -->
-    <div class="alert alert-danger" id="errorMessages"></div>
-
+    <!-- Display error message -->
+    {% if error_message %}
+    <div class="alert alert-danger show" role="alert">
+        <span class="alert-icon">&#9888;</span> <!-- Warning icon (exclamation mark) -->
+        <p><strong>Error!</strong> {{ error_message }}</p>
+    </div>
+    {% endif %}
+    
     <form method="POST" action="{{ url_for('add_entry', table_name=table_name) }}" id="dataForm">
         {% for column in table_columns %}
             <div class="mb-3">
@@ -317,7 +382,7 @@
                 {% elif validation_rules[column][1] == 'number' %}
                     <input type="number" class="form-control" id="{{ column }}" name="{{ column }}" required>
                 {% elif validation_rules[column][1] == 'phone' %}
-                    <input type="tel" class="form-control" id="{{ column }}" name="{{ column }}" pattern="^\+?[0-9\s\(\)-]+$" title="Enter a valid phone number" required>
+                    <input type="tel" class="form-control" id="{{ column }}" name="{{ column }}" pattern="^\+?[0-9\s\(\)\-\+]+$" title="Enter a valid phone number" required>
                 {% elif validation_rules[column][1] == 'name_format' %}
                     <input type="text" class="form-control" id="{{ column }}" name="{{ column }}" pattern="^[A-Z][a-z]+(?: [A-Z][a-z]+)+$" title="Only letters and spaces allowed" required>
                 {% elif validation_rules[column][1] == 'date' %}
@@ -337,6 +402,7 @@
         {% endfor %}
         <button type="submit" class="btn submit-btn">Submit</button>
     </form>
+
 </div>
 
 <!-- Bootstrap JS -->
@@ -347,7 +413,11 @@
         event.preventDefault(); // Prevent form submission until validation is complete
         let formValid = true;
         let errorMessages = [];
-
+    
+        // Clear previous error messages
+        const errorContainers = document.querySelectorAll('.error-message');
+        errorContainers.forEach(container => container.innerHTML = '');
+    
         {% for column in table_columns %}
             var colName = '{{ column }}';
             var value = document.getElementById(colName).value.trim(); // .trim() to remove leading/trailing spaces
@@ -381,9 +451,9 @@
                     if (isNaN(dateObj.getTime()) || date !== dateObj.toISOString().split('T')[0]) {
                         errorMessages.push(colName + ": Please enter a valid date (YYYY-MM-DD).");
                         formValid = false;
-                    }
+                    } 
                 }
-                } else if (validationRule[1] == "number") {
+                else if (validationRule[1] == "number") {
                     // Validate integer ID fields
                     if (!Number.isInteger(Number(value)) || value.trim() === "") {
                         errorMessages.push(colName + ": ID must be a valid integer.");
@@ -391,7 +461,8 @@
                     }
                 } else if (validationRule[1] == "phone") {
                     // Validate phone number format (XXX-XXX-XXXX)
-                    if (!/^\d{3}-\d{3}-\d{4}$/.test(value)) {
+                    var phonePattern = /^\+?[0-9\s\(\)\-\+]+$/;
+                    if (!phonePattern.test(value)) {
                         errorMessages.push(colName + ": Please enter a valid phone number (XXX-XXX-XXXX).");
                         formValid = false;
                     }
@@ -426,17 +497,22 @@
                     }
                 }
             }
+    
         {% endfor %}
         
+        // If the form is valid, submit it; else, show error messages
         if (!formValid) {
-            document.getElementById('errorMessages').innerHTML = errorMessages.join('<br>');
-            document.getElementById('errorMessages').style.display = 'block';
+            alert(errorMessages.join("\n"));
+            // Optionally, show error messages dynamically on the form as well
+            let errorContainer = document.getElementById("error-container");
+            errorContainer.innerHTML = errorMessages.join("<br>");
         } else {
-            // Submit the form if everything is valid
             document.getElementById('dataForm').submit();
         }
     });
-</script>
+    
+
+   </script>
 
 </body>
 </html>

@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request, jsonify
 from flask import Flask, render_template, request, redirect, url_for
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG)  # Ensure debug-level logging
+
 import mysql.connector
 import re
 
@@ -48,50 +52,6 @@ def execute_query(query, params=None):
             cursor.close()
         if connection:
             connection.close()
-
-# def execute_query(query):
-#     connection = None
-#     cursor = None
-#     try:
-#         connection = get_db_connection()
-#         cursor = connection.cursor()
-#         cursor.execute(query)
-#         result = cursor.fetchall()
-        
-#         # Get column names from the cursor description
-#         columns = [column[0] for column in cursor.description]
-#         print(f"Columns: {columns}")  # Debugging: Print column names
-
-#         # Convert each row to a dictionary, with column names as keys
-#         result_dict = []
-#         for row in result:
-#             row_dict = {}
-#             for i, column in enumerate(columns):
-#                 row_dict[column] = row[i]  # Map column name to value
-#             result_dict.append(row_dict)
-
-#         print(f"Result: {result_dict}")  # Debugging: Print result after mapping
-#         return result_dict  # Return a list of dictionaries
-
-#     except mysql.connector.Error as err:
-#         return {"error": f"Database error: {err}"}
-#     except Exception as e:
-#         return {"error": f"An unexpected error occurred: {e}"}
-#     finally:
-#         if cursor:
-#             cursor.close()
-#         if connection:
-#             connection.close()
-
-
-#     # connection.commit()  # Commit changes if necessary
-#     # cursor.close()
-#     # connection.close()
-
-#     # # Flatten the result if it only contains one column
-#     # if result and len(result[0]) == 1:
-#     #     return [row[0] for row in result]
-#     # return result
 
 # Route to handle different queries based on the button clicked (GET request)
 @app.route('/run_query/<query_type>', methods=['GET'])
@@ -216,13 +176,6 @@ def run_query_get(query_type):
             ORDER BY M.Category;
         """
     }
-        # Add more queries as needed
-    # }
-    # if query_type == 'query_1':
-    #     season = request.args.get('season', default="Year-Round", type=str)  # Get season from the query parameter
-    #     query = queries[query_type]
-    #     result = execute_query(query, (season,))
-    #     return jsonify(result)
     if query_type == 'query_7':
         year = request.args.get('year', default=2024, type=int)  # Get year from the query parameter
         # Validate the year
@@ -300,37 +253,6 @@ def tables():
         table_data = fetch_table_data()
 
     return render_template('tables.html', table_data=table_data, table_columns=table_columns)
-# def execute_query(query, params=None):
-#     connection = None
-#     cursor = None
-#     try:
-#         connection = get_db_connection()
-#         cursor = connection.cursor()
-
-#         # Print the query for debugging
-#         print(f"Executing query: {query} with params: {params}")
-        
-#         # Execute the query
-#         cursor.execute(query, params or ())
-        
-#         # Commit the transaction
-#         connection.commit()
-#         print("Query executed successfully!")
-        
-#         return True  # Success
-
-#     except mysql.connector.Error as err:
-#         print(f"Error: {err}")  # Print MySQL error for debugging
-#         return {"error": f"Database error: {err}"}
-#     except Exception as e:
-#         print(f"Error: {e}")  # Print general exception for debugging
-#         return {"error": f"An unexpected error occurred: {e}"}
-#     finally:
-#         if cursor:
-#             cursor.close()
-#         if connection:
-#             connection.close()
-
 def fetch_table_data():
     # Fetch data for all tables
     table_data = {}
@@ -441,7 +363,7 @@ def add_entry(table_name):
             "Category": ["dropdown", ["Espresso Bar", "Brew Bar", "Specialty Bar", "Seasonal Drinks"]],
             "Season": ["dropdown", ["Year-Round", "Fall", "Spring", "Winter", "Summer"]],
         },
-        'Baristas': {
+        "Baristas": {
             "Employee_ID": ['number', "number"],  # Ensure this field exists for Barista
             'Name': ["text", 'name_format'],
             'Phone': ["number", "phone"]
@@ -464,23 +386,45 @@ def add_entry(table_name):
         }
     }
 
+    # Retrieve the validation rules for the current table.
+    table_validation_rules = validation_rules.get(table_name, {})
+    
+    print(f"Validation rules for {table_name}: {table_validation_rules}")  # Debugging print
+
     # Get the columns for the table dynamically
     table_columns = get_table_columns(table_name)
-
-    # Get the image URL for the table
-    # table_images = get_all_tables()
-    # table_image_url = table_images.get(table_name, {}).get('image_url', None)
-    table_data = get_all_tables()  # A function that fetches your table names and image URLs
+    table_data = get_all_tables()  
 
     if request.method == 'POST':
-        # Handle form data insertion
         form_data = request.form.to_dict()
         print("Form Data:", form_data)  # Debugging line
 
-        # Check if 'table_name' is accidentally included in form_data
-        form_data.pop('table_name', None)  # Remove 'table_name' if it exists
+        # Remove 'table_name' if it exists in form_data
+        form_data.pop('table_name', None)
+
+        # Get the primary key column dynamically for the table
+        primary_key_column = get_primary_key_column(table_name)
         
-        # Build insert query dynamically
+        if primary_key_column:
+            primary_key_value = form_data.get(primary_key_column)
+            print(f"Checking for duplicate {primary_key_column}: {primary_key_value}")  # Debug primary key
+
+            if primary_key_value:
+                # Check if the primary key value already exists in the table
+                existing_entry = execute_query(f"SELECT * FROM {table_name} WHERE {primary_key_column} = %s", (primary_key_value,))
+                print(f"Existing entry check result: {existing_entry}")  # Debugging line
+                if existing_entry:
+                    error_message = f"Error: {primary_key_column} = {primary_key_value} already exists in the {table_name} table. Please use a unique value."
+                    print(f"Error Message: {error_message}")
+                    return render_template('add_entry_form.html', 
+                                           table_name=table_name, 
+                                           table_columns=table_columns, 
+                                           table_data=table_data,
+                                           error_message=error_message,
+                                           form_data=form_data,
+                                           validation_rules=table_validation_rules)
+        
+        # Proceed with the insert if no duplicates
         columns = ', '.join(form_data.keys())
         placeholders = ', '.join(['%s'] * len(form_data))  # Use placeholders to avoid SQL injection
         query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
@@ -489,48 +433,86 @@ def add_entry(table_name):
         values = tuple(form_data[column] for column in form_data)
         print(f"Executing query: {query} with values: {values}")  # Debugging line
         
-        # Execute the insert query
-        result = execute_insert_query(query, values)
+        try:
+            result = execute_insert_query(query, values)
+            
+            if isinstance(result, dict) and "error" in result:
+                # Log the error if it occurs
+                logging.error(f"Error inserting data into {table_name}: {result['error']}")
+                error_message = result["error"]
+                return render_template('add_entry_form.html', 
+                                       table_name=table_name, 
+                                       validation_rules=table_validation_rules,
+                                       table_columns=table_columns, 
+                                       table_data=table_data,
+                                       error_message=error_message)
+            
+            # If insert is successful, redirect to the tables page
+            return redirect(url_for('tables'))
+        except Exception as e:
+            logging.error(f"Error executing query for {table_name}: {str(e)}")
+            error_message = f"An error occurred while inserting the data: {str(e)}"
+            return render_template('add_entry_form.html', 
+                                   table_name=table_name, 
+                                   validation_rules=table_validation_rules,
+                                   table_columns=table_columns, 
+                                   table_data=table_data,
+                                   error_message=error_message,
+                                   form_data=form_data)
+        except mysql.connector.Error as err:
+            logging.error(f"Error inserting data into {table_name}: {err}")
+            error_message = f"Error inserting data: {err}"
+            return render_template('add_entry_form.html', 
+                                   table_name=table_name, 
+                                   validation_rules=table_validation_rules,
+                                   table_columns=table_columns, 
+                                   table_data=table_data,
+                                   error_message=error_message,
+                                   form_data=form_data)
 
-        # Check if result is a dictionary (error)
-        if isinstance(result, dict) and "error" in result:
-            print("Error inserting data:", result["error"])  # Debugging
-        else:
-            # If the result is not an error (True for success), confirm success
-            print("Data inserted successfully!")
-
-        # Redirect after successful insertion
-        return redirect(url_for('tables'))
-    
-    # Return form to the user with columns and image URL
+    # Return the form for the user to fill out if no POST request
     return render_template('add_entry_form.html', 
                            table_name=table_name, 
+                           validation_rules=table_validation_rules,
                            table_columns=table_columns, 
-                           validation_rules=validation_rules.get(table_name, {}),
                            table_data=table_data)
-
+     
 def execute_insert_query(query, params=None):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(query, params)
-
-        # Handle SELECT queries: fetch all results if necessary
-        if query.strip().lower().startswith("select"):
-            results = cursor.fetchall()
-            return results
-
-        # For other queries (INSERT, UPDATE, DELETE), just commit and return True
-        conn.commit()
+        conn.commit()  # Ensure the transaction is committed
         return True
-
     except mysql.connector.Error as err:
-        print(f"Error executing query: {err}")
-        return {"error": str(err)}
-
+        # Check for duplicate entry error (1062 is the error code for duplicate entry)
+        if err.errno == 1062:
+            logging.error(f"Duplicate entry found for {params[0]}")  # Log the duplicate entry error
+            return {"error": f"Duplicate entry for {params[0]}."}
+        else:
+            return {"error": f"Database error: {err}"}
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        return {"error": f"Unexpected error: {e}"}
     finally:
-        # Always close the cursor after the query is processed
         cursor.close()
+        conn.close()
+
+def get_primary_key_column(table_name):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    
+    query = f"SHOW KEYS FROM {table_name} WHERE Key_name = 'PRIMARY'"
+    cursor.execute(query)
+    result = cursor.fetchall()
+    
+    # If primary key is found, return the column name (first column in the result)
+    if result:
+        print(result)
+        primary_key_column = result[0][4]  # 4th index is the column name
+        return primary_key_column
+    return None  # If no primary key is found
+
 
 @app.route('/get_table_columns/<table_name>', methods=['GET'])
 def get_columns(table_name):
