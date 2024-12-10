@@ -212,39 +212,36 @@
             background-color: transparent; /* Transparent background */
             position: relative; /* Allow positioning */
             top: 5px; /* Shift button down slightly */
-            left: -5px; /* Shift button left slightly */
+            left: -5px; 
         }
 
-        /* Adjust the appearance when the hamburger is clicked */
         .navbar-toggler-icon.collapsed span:nth-child(1) {
-            transform: translate(8px, 8px) rotate(45deg); /* Move and rotate the first square */
+            transform: translate(8px, 8px) rotate(45deg); 
         }
 
         .navbar-toggler-icon.collapsed span:nth-child(3) {
-            transform: translate(-8px, 8px) rotate(-45deg); /* Move and rotate the third square */
+            transform: translate(-8px, 8px) rotate(-45deg); 
         }
 
         .navbar-toggler-icon.collapsed span:nth-child(5),
         .navbar-toggler-icon.collapsed span:nth-child(7),
         .navbar-toggler-icon.collapsed span:nth-child(9) {
-            opacity: 0; /* Hide the other squares when collapsed */
+            opacity: 0; 
         }
 
-        /* Hover effect for waffle squares */
         .navbar-toggler-icon:hover span {
-            background-color: #f7f7f4; /* Change color on hover */
+            background-color: #f7f7f4; 
         }
 
-        /* Hover effect for the toggle button */
         .navbar-toggler:hover {
-            background-color:  #62B4BB; /* Button background change on hover */
+            background-color:  #62B4BB; 
         }
-        /* Feature Card Container - Grid Layout */
+
 
     .navbar .navbar-brand,
         .navbar .nav-link,
         .navbar-toggler-icon span {
-            color: #f7f7f4; !important; /* Text and icon color to white */
+            color: #f7f7f4; !important; 
         }
 
     
@@ -258,15 +255,15 @@
     
         /* Carousel Container */
         #tableCarousel {
-            width: 100vw; /* Full viewport width */
-            background-color: #d9593a; /* Match with the navbar background color */
-            border-radius: 0 0 30px 30px; /* Rounded corners at the bottom */
-            overflow: hidden; /* Ensure no overflow outside rounded corners */
+            width: 100vw; 
+            background-color: #d9593a; 
+            border-radius: 0 0 30px 30px; 
+            overflow: hidden; 
             position: relative;
-            margin-top: 0 px ; /* Ensure it sticks directly under the navbar */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for a better effect */
-            margin-top: 0px;  /* Adjust this value to create more space */
-            z-index: 100;  /* Ensure it stays above other elements */
+            margin-top: 0 px ; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            margin-top: 0px; 
+            z-index: 100;  
 
         
 
@@ -276,18 +273,18 @@
         .carousel-inner {
             width: 100%;
             color:#f7f7f4;
-            padding-top: 30px;  /* Adjust the space between the top of the carousel and the items */
+            padding-top: 30px;  
             margin: 0px
         }
     
         .carousel-item {
             width: 100%;
-            border-radius: 0 0 30px 30px; /* Rounded corners on both left and right */
+            border-radius: 0 0 30px 30px; 
             display: flex;
-            justify-content: center; /* Center the content horizontally */
-            align-items: center;     /* Center the content vertically */
-            padding: 20px;  /* Padding for table content */
-            font-family: 'Roboto', sans-serif; /* Set the font to Roboto for the whole body */
+            justify-content: center; 
+            align-items: center;    
+            padding: 20px;  
+            font-family: 'Roboto', sans-serif; 
 
 
         }
@@ -295,29 +292,29 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px; /* Add padding around the carousel item */
-            text-align: center; /* Center the text */
+            padding: 20px; 
+            text-align: center; 
             padding-top: 0 px;
         }
         
         .carousel-table-content {
-            width: 80%; /* Limit the width of the table content */
+            width: 80%;
             margin: 0 auto; 
         }
         
 
         .carousel-item table {
-            width: 100%; /* Set table width to 100% of the content area */
-            margin: 0 auto; /* Center the table horizontally */
-            border-collapse: collapse; /* Remove any extra space between cells */
-            font-family: 'Roboto', sans-serif; /* Set the font to Roboto for the whole body */
+            width: 100%; 
+            margin: 0 auto; 
+            border-collapse: collapse; 
+            font-family: 'Roboto', sans-serif; 
 
         }
                 /* Table Header and Table Cells */
 
         .carousel-item th, .carousel-item td {
-            text-align: center; /* Center text horizontally */
-            padding: 12px 15px; /* Add some padding for better spacing */
+            text-align: center; 
+            padding: 12px 15px; 
         }
 
         /* Remove vertical borders */
@@ -328,15 +325,14 @@
 
         /* Optional: Add a border at the bottom of the rows (horizontal borders) */
         .carousel-item th, .carousel-item td {
-            border-bottom: 1px solid #ddd; /* Add a subtle bottom border for clarity */
+            border-bottom: 1px solid #ddd; 
         }
 
-        /* Optional: Style the table header */
         .carousel-item th {
-            background-color: #d9593a; /* Add a background color to the header */
-            color: #f7f7f4; /* Text color of the header */
-            font-weight: bold; /* Make header text bold */
-            font-family: 'Roboto', sans-serif; /* Set the font to Roboto for the whole body */
+            background-color: #d9593a; 
+            color: #f7f7f4; 
+            font-weight: bold; 
+            font-family: 'Roboto', sans-serif; 
 
         }
     
@@ -344,14 +340,12 @@
             color: #f7f7f4;
         }
     
-        /* Make Carousel full height to fill screen */
         #tableCarousel {
-            min-height: 85vh; /* This can be adjusted based on how much space you want to give to the carousel */
+            min-height: 85vh; 
         }
     
-        /* Adjust the rounded corners below the carousel */
         .carousel-item {
-            border-radius: 0 0 30px 30px; /* Add rounded corners to each item in the carousel */
+            border-radius: 0 0 30px 30px; 
         }
         .carousel-item {
             display: none;
@@ -369,21 +363,20 @@
 
         }
         section#tables {
-            margin-top: 0; /* Remove top margin */
-            padding-top: 0; /* Remove top padding */
+            margin-top: 0; 
+            padding-top: 0; 
         }
         
         .table th {
-            text-transform: uppercase;
+            font-weight: 650;
+            font-size: 1.25rem;  
+
 
         }
         .table, .table th, .table td {
-            color: #f7f7f4; /* Set text color */
-            font-family: 'Roboto', sans-serif; /* Set the font to Roboto for the whole body */
-
-
+            color: #f7f7f4; 
+            font-family: 'Roboto', sans-serif; 
         }
-        /* Additional Styling for Table Content */
         .table {
             border-radius: 10px;
             overflow: hidden;
@@ -391,15 +384,15 @@
         }
         
         .table th {
-            color: #f7f7f4; /* Ensure header text is also the same color */
+            color: #f7f7f4; 
         }
         #tables {
             padding-top: 0px;
         }
         
         .table tbody tr:hover {
-            background-color: #62B4BB; /* A nice hover effect to highlight rows */
-            color: #f7f7f4; /* Ensure the text color remains the same on hover */
+            background-color: #62B4BB; 
+            color: #f7f7f4; 
         }
         .carousel-inner img {
             border-radius: 0 0 30px 30px;
@@ -442,24 +435,22 @@
         }
         
         .navbar-nav {
-            margin-left: auto !important; /* Override any other margin properties */
+            margin-left: auto !important; 
         }
         
-        /* Ensure no padding in the navbar */
         .navbar-collapse {
             padding: 0 !important; /* Reset any unwanted padding */
         }
         
-        /* Optional: Align the waffle icon (navbar-toggler) */
         .navbar-toggler {
-            margin-left: auto !important; /* Align the hamburger icon (waffle) to the right */
+            margin-left: auto !important; 
         }
         
         
         .carousel-indicators button {
             margin-top: 0px;
             margin-bottom: -17px; 
-            background-color: #f7f7f4; /* Dot color */
+            background-color: #f7f7f4; 
             border: none;
             width: 10px;
             height: 10px;
@@ -468,25 +459,26 @@
         }
         
         .carousel-indicators .active {
-            background-color: #62B4BB; /* Active dot color */
+            background-color: #62B4BB; 
         }
         
         .carousel-indicators button:hover {
-            background-color: #EF9684; /* Hover color */
+            background-color: #EF9684; 
         }
         
         h4 {
-            font-size: 2.5rem;  /* Larger font size for impact */
+            font-size: 2.5rem; 
             font-weight: 700;
-            color: #f7f7f4;  /* Darker color for good contrast */
+            color: #f7f7f4;  
             text-align: center;
-            padding-left: 30px;  /* Add extra padding to the left for text inside */
-            padding-right: 30px; /* Add extra padding to the right for text inside */
+            padding-left: 30px;  
+            padding-right: 30px; 
             text-transform: uppercase;
             letter-spacing: 2px;
             padding-bottom: 0;
+            font-family: 'Roboto', sans-serif;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
             background-color: #d9593a; /* Subtle white background */
-            font-family: 'Roboto', sans-serif; /* Set the font to Roboto for the whole body */
 
 
         }
