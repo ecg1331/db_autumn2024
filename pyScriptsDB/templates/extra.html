@@ -2836,3 +2836,174 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 </body>
 </html>
+
+
+.about-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    margin: 0; /* Remove any margin */
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #82a3a6; /* Background color */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #fce499;
+        }
+
+        /* Header Section */
+        #about-header {
+            position: relative;
+            width: 100%;
+            height: 80vh; /* Takes up 50% of the vertical space */
+            background-image: url('static/mini_lib.jpg');
+            background-size: cover;
+            background-position: center 10%; /* Adjust the vertical position (e.g. 20% from the top) */
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+
+        #about-header h1 {
+            position: absolute;
+            top: 35%;
+            left: 49%;
+            font-weight: 900;
+            transform: translate(-50%, -50%);
+            font-size: 3.5rem;
+            color: #f7f7f4;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-family: 'Roboto', sans-serif;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.6);
+        }
+
+        /* About Section Styles */
+        .about-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Reduce gap to allow overlap */
+            margin-top: 50px;
+            padding: 50px 10%; /* Padding to prevent touching the edges */
+            position: relative;
+        }
+
+        .about-card {
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+            padding: 20px;
+            position: relative; /* Ensure cards are positioned normally */
+        }
+
+        /* Text Card (Dark Background) */
+        .about-card-text {
+            background-color: #98a989; /* Color for text card */
+            color: #393E41; /* Text color */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 50%; /* Wider text card */
+            height: 300px; /* Smaller height */
+            z-index: 2; /* Ensure text card is on top */
+            position: relative;
+        }
+
+        /* Image Card (Larger and Taller) */
+        .about-card-image {
+            width: 60%; /* Image card slightly smaller than text card */
+            height: 400px; /* Taller height */
+            border-radius: 20px;
+            overflow: hidden;
+            background: none; /* No background */
+            z-index: 1; /* Image card will be behind text card */
+            position: relative;
+            background-image: url('static/cat_cook.jpg');
+        }
+
+
+        /* Overlapping Effect */
+        .about-card-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 15px; /* Reduce the gap for more overlap */
+        }
+
+        .about-card-wrapper .about-card:nth-child(1) {
+            margin-top: -50px; /* Adjust the vertical overlap */
+            z-index: 2; /* Bring text card to the front */
+        }
+
+        .about-card-wrapper .about-card:nth-child(2) {
+            margin-top: -100px; /* Adjust the vertical overlap */
+            z-index: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .about-section {
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .about-card {
+                width: 90%; /* Take up most of the screen width on smaller screens */
+                margin-bottom: 20px; /* Add some space between the cards */
+            }
+
+            .about-card-wrapper .about-card:nth-child(1) {
+                margin-top: 30px; /* Adjust vertical overlap for smaller screens */
+            }
+
+            .about-card-wrapper .about-card:nth-child(2) {
+                margin-top: 70px; /* Adjust vertical overlap for smaller screens */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- About Header Section -->
+    <section id="about-header">
+        <h1>About</h1>
+    </section>
+
+    <!-- About Section with Cards -->
+    <section class="about-section">
+        <div class="about-card-wrapper">
+            <!-- Text Card (Dark Background) -->
+            <div class="about-card about-card-text">
+                <h3>Our Inspiration</h3>
+                <p>
+                    We would like to acknowledge the influence of Plein Air and Volumes in inspiring our project, and thank the kind people at Plein Air in particular from which we were able to procure much of our real world data. All image sources are listed below, and we are grateful to all of the resources provided in this course. 
+                </p>
+            </div>
+            <!-- Image Card (Larger and Taller) -->
+            <div class="about-card about-card-image">
+                <img src="static/cat_cook.jpg" alt="Our Vision">
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS and Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

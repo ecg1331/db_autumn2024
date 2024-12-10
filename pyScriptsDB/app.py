@@ -45,7 +45,7 @@ def execute_query(query, params=None):
 
     except mysql.connector.Error as err:
         return {"error": f"Database error: {err}"}
-    except Exception as e:
+    except Excption as e:
         return {"error": f"An unexpected error occurred: {e}"}
     finally:
         if cursor:
@@ -195,6 +195,9 @@ def run_query_get(query_type):
 def home():
     return render_template('index.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 # Features page route
 @app.route('/features')
