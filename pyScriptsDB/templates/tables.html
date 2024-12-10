@@ -31,7 +31,37 @@
             background-color: #c65639; /* Darker shade on hover */
         }
         
+        .feature-card {
+            display: flex;
+            border: 1.8px solid #d9593a;
+            flex-direction: column;
+            justify-content: space-between;        
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-height: 250px; /* Set the minimum height, adjust as needed */
+        }
         
+        .d-flex {
+            display: flex;
+        }
+        
+        .flex-grow-1 {
+            flex-grow: 1;
+        }
+        
+        
+        .feature-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card-icon {
+            font-size: 3rem;
+            color: #d9593a;  /* Change this to your desired hex color */
+        }
         html, body {
             margin: 0;
             padding: 0;
@@ -41,9 +71,43 @@
         
         }
 
+        .feature-card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        
 
+        .feature-card-description {
+            margin-top: 10px;
+            font-size: 1rem;
+            flex-grow: 1;
+        }
 
-  
+        .feature-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        /* Ensure responsiveness */
+        .feature-card-container .col-md-4 {
+            flex: 1 0 30%; /* 3 items per row on medium screens */
+            min-width: 250px; /* Ensures the cards shrink on smaller screens */
+        }
+
+        @media (max-width: 768px) {
+            .feature-card-container .col-md-4 {
+                flex: 1 0 45%; /* 2 items per row on smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .feature-card-container .col-md-4 {
+                flex: 1 0 100%; /* 1 item per row on extra small screens */
+            }
+        }
 
         
         .navbar {
@@ -93,6 +157,7 @@
     
         /* Additional Styling for Table Content */
         .table {
+            border-radius: 10px;
             overflow: hidden;
             margin-top: 0px;
         }
@@ -195,6 +260,7 @@
         #tableCarousel {
             width: 100vw; /* Full viewport width */
             background-color: #d9593a; /* Match with the navbar background color */
+            border-radius: 0 0 30px 30px; /* Rounded corners at the bottom */
             overflow: hidden; /* Ensure no overflow outside rounded corners */
             position: relative;
             margin-top: 0 px ; /* Ensure it sticks directly under the navbar */
@@ -216,6 +282,7 @@
     
         .carousel-item {
             width: 100%;
+            border-radius: 0 0 30px 30px; /* Rounded corners on both left and right */
             display: flex;
             justify-content: center; /* Center the content horizontally */
             align-items: center;     /* Center the content vertically */
@@ -276,7 +343,10 @@
             min-height: 85vh; /* This can be adjusted based on how much space you want to give to the carousel */
         }
     
-
+        /* Adjust the rounded corners below the carousel */
+        .carousel-item {
+            border-radius: 0 0 30px 30px; /* Add rounded corners to each item in the carousel */
+        }
         .carousel-item {
             display: none;
         }
@@ -295,8 +365,6 @@
         section#tables {
             margin-top: 0; /* Remove top margin */
             padding-top: 0; /* Remove top padding */
-            padding-bottom: 0;
-            margin-bottom: 0;
         }
         
         .table th {
@@ -311,10 +379,9 @@
         }
         /* Additional Styling for Table Content */
         .table {
+            border-radius: 10px;
             overflow: hidden;
             margin-top: 0px;
-            margin-bottom: 0 px;
-            padding-bottom: 10px
         }
         
         .table th {
@@ -344,8 +411,6 @@
         section {
             padding-top: 0;
             margin-top:0px;
-            margin-bottom: 0px;
-            padding-bottom: 0px;
 
         }
         #text-center {
@@ -363,14 +428,11 @@
             margin-right: 0;
             padding-top: 0 !important;  /* Force padding to 0 */
             margin-top: 0 !important; 
-            padding-bottom: 0 !important;  /* Force padding to 0 */
-            margin-bottom: 0 !important; 
         }
         
         .container.my-5, #tables, .carousel-item {
             padding-top: 0px;
             margin-top: 0px;
-            
         }
         
         .navbar-nav {
@@ -389,7 +451,6 @@
         
         
         .carousel-indicators button {
-            padding-top: 10px;
             margin-top: 0px;
             margin-bottom: -17px; 
             background-color: #f7f7f4; /* Dot color */
@@ -423,77 +484,12 @@
 
 
         }
-        @media (max-width: 768px) {
-            h4 {
-                font-size: 2rem; /* Smaller font size on smaller screens */
-            }
-        }
-        .carousel-indicators button {
-            transition: background-color 0.3s ease;
-        }
-
-        #tableCarousel {
-            position: relative;
-            overflow: hidden;
-            height: auto; /* Set based on content, make sure the carousel fits */
-        }
-        
-        .carousel-inner {
-            display: flex;  /* Flexbox ensures carousel items are treated as slides */
-            flex-direction: column; /* Stack carousel items vertically */
-            width: 100%;
-        }
-        
-        .carousel-item {
-            display: block;  /* Make sure each item is block-level */
-            width: 100%;
-            text-align: center;
-        }
-        
-        .carousel-item table {
-            width: 100%;  /* Ensure table takes full available width */
-            margin: 0 auto;  /* Center the table */
-            border-collapse: collapse;
-            margin-bottom: 30px;
-        }
-        
-        .carousel-control-prev, .carousel-control-next {
-            background-color: #d9593a;  /* Custom color for control buttons */
-        }
-        
-        .carousel-control-prev-icon, .carousel-control-next-icon {
-            background-color: #f7f7f4;  /* Control button icon color */
-        }
-        
-        .carousel-indicators button {
-            background-color: #f7f7f4;  /* Dot color */
-            border: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        
-        .carousel-indicators .active {
-            background-color: #62B4BB;  /* Active dot color */
-        }
-        
-        
-        
-        .carousel-inner {
-            padding-bottom: 50px;  /* Add more space between table and bottom buttons */
-        }
-        
-        .carousel-item table {
-            margin-bottom: 20px;  /* Add space at the bottom of the table */
-        }
-        
-        
 
         </style>
                         
 
 </head>
-<body style="background-color: #d9593a;">
+<body style="background-color: #62B4BB;">
 
     <!-- Navbar -->
 
@@ -556,25 +552,24 @@
         </nav>
                                                  
 
-<!-- Display for Each Table in Carousel -->
-<section id="tables" class="container my-5">
-    <div class="container mt-5">
+<!-- Feature Cards for Each Table -->
+<section id="tables" class="container my-5" >
+    <!-- Carousel displaying 3-4 tables (Main Feature) -->
+    <div class="container mt-5" >
         <div id="tableCarousel" class="carousel slide" data-bs-ride="false">
-            <!-- Carousel indicators -->
             <div class="carousel-indicators">
                 {% for table_name, results in table_data.items() %}
                     <button type="button" data-bs-target="#tableCarousel" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ loop.index0 }}"></button>
                 {% endfor %}
             </div>
-
-            <!-- Carousel inner: Contains all the items -->
+        
             <div class="carousel-inner">
                 {% for table_name, results in table_data.items() %}
-                    <!-- Each table goes inside a carousel item -->
+                    <!-- Carousel item for each table -->
                     <div class="carousel-item {% if loop.first %}active{% endif %}">
                         <div class="carousel-table-content">
                             <h4 class="text-center">{{ table_name }}</h4>
-                            {% if results %}
+                            {% if results is not none and results != [] %}
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -600,7 +595,9 @@
                     </div>
                 {% endfor %}
             </div>
-
+            
+            
+        
             <!-- Carousel controls -->
             <button class="carousel-control-prev" type="button" data-bs-target="#tableCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -611,12 +608,12 @@
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
-    </div>
+        </div>
+
+
+
+
 </section>
-
-</body>
-
-
 
 
 
@@ -672,42 +669,30 @@
                         dropdown.appendChild(option);
                     });
                 }
-    
-                // Populate the carousel with tables
+
+                // Populate the carousel with 3-4 tables
                 const carouselInner = document.getElementById('carousel-inner');
                 const carouselIndicators = document.getElementById('carousel-indicators');
-    
+
                 if (carouselInner && carouselIndicators) {
-                    // Ensure the carousel items and indicators are reset before populating
-                    carouselInner.innerHTML = '';
-                    carouselIndicators.innerHTML = '';
-    
                     tables.slice(0, 4).forEach((table, index) => {
                         // Create carousel indicators
-                        const indicator = document.createElement('button');
-                        indicator.setAttribute('type', 'button');
+                        const indicator = document.createElement('li');
                         indicator.setAttribute('data-bs-target', '#tableCarousel');
                         indicator.setAttribute('data-bs-slide-to', index);
-                        if (index === 0) indicator.classList.add('active');  // First item is active
-                        indicator.setAttribute('aria-current', index === 0 ? 'true' : 'false');
-                        indicator.setAttribute('aria-label', `Slide ${index}`);
+                        if (index === 0) indicator.classList.add('active');
                         carouselIndicators.appendChild(indicator);
-    
-                        // Create carousel items (each table)
+
+                        // Create carousel items
                         const carouselItem = document.createElement('div');
                         carouselItem.classList.add('carousel-item');
-                        if (index === 0) carouselItem.classList.add('active');  // First item is active
-    
-                        // Add table content to the carousel item
+                        if (index === 0) carouselItem.classList.add('active');
                         carouselItem.innerHTML = `
                             <div class="carousel-caption d-none d-md-block">
                                 <h5>${table}</h5>
                                 <p>View data from the ${table} table</p>
-                                <!-- You can dynamically fetch and insert the table data here if needed -->
                             </div>
                         `;
-    
-                        // Append the carousel item to the carousel inner container
                         carouselInner.appendChild(carouselItem);
                     });
                 }
@@ -716,7 +701,6 @@
                 console.error('Error loading tables:', error);
             });
     }
-    
 
 
     // Ensure the DOM is loaded before calling loadTables
@@ -726,3 +710,4 @@
 </script>
 </body>
 </html>
+

@@ -914,3 +914,1925 @@
 
 
 </section>
+
+
+<script>
+    function fetchTableData(tableName, carouselItem) {
+        fetch(`/get_table_columns/${tableName}`)
+            .then(response => response.json())
+            .then(columns => {
+                // Dynamically generate the table header and rows here
+                let tableHtml = `
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                ${columns.map(col => `<th>${col}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table data rows will go here -->
+                        </tbody>
+                    </table>
+                `;
+                // Insert the generated table HTML into the carousel item
+                carouselItem.querySelector('.carousel-table-content').innerHTML = tableHtml;
+            })
+            .catch(error => {
+                console.error('Error fetching table columns:', error);
+                carouselItem.querySelector('.carousel-table-content').innerHTML = '<p>Error loading table data.</p>';
+            });
+    }
+
+    // Initialize carousel and set up lazy loading of table data
+    document.addEventListener('DOMContentLoaded', function () {
+        const carousel = new bootstrap.Carousel('#tableCarousel');
+        
+        // Listen for the slide event to load the next table
+        $('#tableCarousel').on('slid.bs.carousel', function (e) {
+            const activeItem = e.relatedTarget; // Get the active carousel item
+            const tableName = activeItem.getAttribute('data-table-name');
+            
+            // Only fetch the table data if it's not already loaded
+            if (!activeItem.querySelector('table')) {
+                fetchTableData(tableName, activeItem);
+            }
+        });
+
+        // Optionally, load the first table immediately when the page loads
+        const firstCarouselItem = document.querySelector('.carousel-item.active');
+        const firstTableName = firstCarouselItem.getAttribute('data-table-name');
+        fetchTableData(firstTableName, firstCarouselItem);
+    });
+    
+    function loadTables() {
+        fetch('/get_tables')
+            .then(response => response.json())
+            .then(tables => {
+                // Populate the dropdown
+                const dropdown = document.getElementById('tableSelect');
+                if (dropdown) {
+                    tables.forEach(table => {
+                        const option = document.createElement('option');
+                        option.value = table;
+                        option.textContent = table;
+                        dropdown.appendChild(option);
+                    });
+                }
+    
+                // Populate the carousel with tables
+                const carouselInner = document.getElementById('carousel-inner');
+                const carouselIndicators = document.getElementById('carousel-indicators');
+    
+                if (carouselInner && carouselIndicators) {
+                    // Ensure the carousel items and indicators are reset before populating
+                    carouselInner.innerHTML = '';
+                    carouselIndicators.innerHTML = '';
+    
+                    tables.slice(0, 4).forEach((table, index) => {
+                        // Create carousel indicators
+                        const indicator = document.createElement('button');
+                        indicator.setAttribute('type', 'button');
+                        indicator.setAttribute('data-bs-target', '#tableCarousel');
+                        indicator.setAttribute('data-bs-slide-to', index);
+                        if (index === 0) indicator.classList.add('active');  // First item is active
+                        indicator.setAttribute('aria-current', index === 0 ? 'true' : 'false');
+                        indicator.setAttribute('aria-label', `Slide ${index}`);
+                        carouselIndicators.appendChild(indicator);
+    
+                        // Create carousel items (each table)
+                        const carouselItem = document.createElement('div');
+                        carouselItem.classList.add('carousel-item');
+                        if (index === 0) carouselItem.classList.add('active');  // First item is active
+    
+                        // Add table content to the carousel item
+                        carouselItem.innerHTML = `
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>${table}</h5>
+                                <p>View data from the ${table} table</p>
+                                <!-- You can dynamically fetch and insert the table data here if needed -->
+                            </div>
+                        `;
+    
+                        // Append the carousel item to the carousel inner container
+                        carouselInner.appendChild(carouselItem);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading tables:', error);
+            });
+    }
+    
+
+
+    // Ensure the DOM is loaded before calling loadTables
+    document.addEventListener('DOMContentLoaded', function () {
+        loadTables();
+    });
+</script>
+
+
+
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;  /* Include padding and border in the total width/height */
+}
+
+
+
+.btn-primary {
+    background-color: #dc5f3f; /* Custom color for primary button */
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #c65639; /* Darker shade on hover */
+}
+
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;  /* Ensure the body occupies full width */
+    overflow-x: hidden;  /* Prevent horizontal overflow */
+
+}
+
+
+
+
+
+
+.navbar {
+    background-color: #f7f7f4; /* Navbar background color */  /* Ensure no top padding in the navbar */
+    padding-bottom: 1px; /* Remove bottom padding of navbar */
+    padding-top: 0px !important;
+    margin-bottom: 0px;
+}
+
+/* Set the text and icon color to #f7f7f4 */
+.navbar .navbar-brand, 
+.navbar .nav-link, 
+.navbar-toggler-icon,
+.navbar .nav-item i {
+    color:  #f7f7f4 !important; /* Override text and icon color */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f4;
+}
+
+
+
+/* Navbar */
+.navbar {
+    background-color: #62B4BB;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-bottom: 0; /* Ensure no bottom margin */
+    position: relative;  /* Ensure it is positioned correctly */
+    z-index: 1050; 
+
+}
+
+.navbar-toggler-icon span {
+    background-color: #333; /* Dark color for the hamburger menu */
+}
+
+/* Optional Styling for Tables Section */
+.container.my-5 {
+    padding-top: 0px;
+    margin-top:0px;
+}
+
+/* Additional Styling for Table Content */
+.table {
+    overflow: hidden;
+    margin-top: 0px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #62B4BB;
+}
+
+/* Styling for Go Back and Add Entry Buttons */
+.btn {
+    margin-top: 10px;
+}
+
+.navbar-toggler-icon {
+    background-image: none;
+    display: grid;
+    grid-template-columns: repeat(3, 7px); /* 3 columns, each 5px */
+    grid-template-rows: repeat(3, 7px);    /* 3 rows, each 5px */
+    gap: 1px;                               /* Small gap between squares */
+    width: 22px;                            /* Overall width of the waffle icon */
+    height: 22px;                           /* Overall height of the waffle icon */
+    justify-content: center;                /* Center grid horizontally */
+    align-items: center;                    /* Center grid vertically */
+}
+
+/* Individual waffle squares (bars) */
+.navbar-toggler-icon span {
+    display: block;
+    background-color: #f7f7f4; /* Waffle square color */
+    border-radius: 0px;         /* Slightly rounded corners */
+    border-color:  #62B4BB;
+    z-index: 1060;  /* Ensures the icon stays above the carousel */
+
+}
+
+/* Square size adjustments */
+.navbar-toggler-icon span {
+    height: 6px; /* Height of each square */
+    width: 6px;  /* Width of each square */
+}
+
+/* Toggle button appearance */
+.navbar-toggler {
+    padding: 0; /* Remove default padding */
+    border: none; /* Remove border */
+    display: flex; /* Use flexbox to center the icon */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    width: 30px; /* Total width of the button */
+    height: 30px; /* Total height of the button */
+    background-color: transparent; /* Transparent background */
+    position: relative; /* Allow positioning */
+    top: 5px; /* Shift button down slightly */
+    left: -5px; /* Shift button left slightly */
+}
+
+/* Adjust the appearance when the hamburger is clicked */
+.navbar-toggler-icon.collapsed span:nth-child(1) {
+    transform: translate(8px, 8px) rotate(45deg); /* Move and rotate the first square */
+}
+
+.navbar-toggler-icon.collapsed span:nth-child(3) {
+    transform: translate(-8px, 8px) rotate(-45deg); /* Move and rotate the third square */
+}
+
+.navbar-toggler-icon.collapsed span:nth-child(5),
+.navbar-toggler-icon.collapsed span:nth-child(7),
+.navbar-toggler-icon.collapsed span:nth-child(9) {
+    opacity: 0; /* Hide the other squares when collapsed */
+}
+
+/* Hover effect for waffle squares */
+.navbar-toggler-icon:hover span {
+    background-color: #f7f7f4; /* Change color on hover */
+}
+
+/* Hover effect for the toggle button */
+.navbar-toggler:hover {
+    background-color:  #62B4BB; /* Button background change on hover */
+}
+/* Feature Card Container - Grid Layout */
+
+.navbar .navbar-brand,
+.navbar .nav-link,
+.navbar-toggler-icon span {
+    color: #f7f7f4; !important; /* Text and icon color to white */
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Roboto, sans-serif;
+    background-color: #f7f7f4;
+}
+
+
+/* Carousel Container */
+#tableCarousel {
+    width: 100vw; /* Full viewport width */
+    background-color: #d9593a; /* Match with the navbar background color */
+    overflow: hidden; /* Ensure no overflow outside rounded corners */
+    position: relative;
+    margin-top: 0 px ; /* Ensure it sticks directly under the navbar */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for a better effect */
+    margin-top: 0px;  /* Adjust this value to create more space */
+    z-index: 100;  /* Ensure it stays above other elements */
+
+
+
+        }
+
+/* Carousel Item */
+.carousel-inner {
+    width: 100%;
+    color:#f7f7f4;
+    padding-top: 30px;  /* Adjust the space between the top of the carousel and the items */
+    margin: 0px
+}
+
+
+
+.carousel-table-content {
+    width: 80%; /* Limit the width of the table content */
+    margin: 0 auto; 
+}
+
+
+.carousel-item table {
+    width: 100%; /* Set table width to 100% of the content area */
+    margin: 0 auto; /* Center the table horizontally */
+    border-collapse: collapse; /* Remove any extra space between cells */
+}
+        /* Table Header and Table Cells */
+
+.carousel-item th, .carousel-item td {
+    text-align: center; /* Center text horizontally */
+    padding: 12px 15px; /* Add some padding for better spacing */
+}
+
+/* Remove vertical borders */
+.carousel-item th, .carousel-item td {
+    border-left: none;
+    border-right: none;
+}
+
+/* Optional: Add a border at the bottom of the rows (horizontal borders) */
+.carousel-item th, .carousel-item td {
+    border-bottom: 1px solid #ddd; /* Add a subtle bottom border for clarity */
+}
+
+/* Optional: Style the table header */
+.carousel-item th {
+    background-color: #d9593a; /* Add a background color to the header */
+    color: #f7f7f4; /* Text color of the header */
+    font-weight: bold; /* Make header text bold */
+}
+
+.carousel-caption {
+    color: #f7f7f4;
+}
+
+/* Make Carousel full height to fill screen */
+#tableCarousel {
+    min-height: 85vh; /* This can be adjusted based on how much space you want to give to the carousel */
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box; /* Include padding and border in the total width/height */
+}
+
+        
+/* Table Scrollable Area */
+.carousel-table-content {
+    width: 80%; /* Set the width of the table container */
+    max-height: 60vh; /* Limit the height for scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    margin-bottom: 0px; /* Space for the navigation dots */
+    margin: 0 auto;
+}
+
+/* Optional Styling for Tables Section */
+.container.my-5 {
+    padding-top: 0px;
+    margin-top:0px;
+
+}
+section#tables {
+    margin-top: 0; /* Remove top margin */
+    padding-top: 0; /* Remove top padding */
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.table th {
+    text-transform: uppercase;
+
+}
+.table, .table th, .table td {
+    color: #f7f7f4; /* Set text color */
+    font-family: 'Roboto', sans-serif; /* Set the font to Roboto for the whole body */
+
+
+}
+/* Additional Styling for Table Content */
+.table {
+    overflow: hidden;
+    margin-top: 0px;
+    margin-bottom: 0 px;
+    padding-bottom: 10px
+}
+
+.table th {
+    color: #f7f7f4; /* Ensure header text is also the same color */
+}
+#tables {
+    padding-top: 0px;
+}
+
+.table tbody tr:hover {
+    background-color: #62B4BB; /* A nice hover effect to highlight rows */
+    color: #f7f7f4; /* Ensure the text color remains the same on hover */
+}
+.carousel-inner img {
+    border-radius: 0 0 30px 30px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #d9593a;
+}
+
+/* Styling for Go Back and Add Entry Buttons */
+.btn {
+    margin-top: 10px;
+}
+section {
+    padding-top: 0;
+    margin-top:0px;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+
+}
+#text-center {
+    color:#f7f7f4;
+}
+body {
+    margin: 0; /* Remove all body margin */
+    padding: 0; /* Remove any padding from the body */
+}
+
+.container, .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0 !important;  /* Force padding to 0 */
+    margin-top: 0 !important; 
+    padding-bottom: 0 !important;  /* Force padding to 0 */
+    margin-bottom: 0 !important; 
+}
+
+.container.my-5, #tables, .carousel-item {
+    padding-top: 0px;
+    margin-top: 0px;
+    
+}
+
+.navbar-nav {
+    margin-left: auto !important; /* Override any other margin properties */
+}
+
+/* Ensure no padding in the navbar */
+.navbar-collapse {
+    padding: 0 !important; /* Reset any unwanted padding */
+}
+
+/* Optional: Align the waffle icon (navbar-toggler) */
+.navbar-toggler {
+    margin-left: auto !important; /* Align the hamburger icon (waffle) to the right */
+}
+
+
+.carousel-indicators button {
+    padding-top: 10px;
+    margin-top: 0px;
+    margin-bottom: -17px; 
+    background-color: #f7f7f4; /* Dot color */
+    border: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.carousel-indicators .active {
+    background-color: #62B4BB; /* Active dot color */
+}
+
+.carousel-indicators button:hover {
+    background-color: #EF9684; /* Hover color */
+}
+
+h4 {
+    font-size: 2.5rem;  /* Larger font size for impact */
+    font-weight: 700;
+    color: #f7f7f4;  /* Darker color for good contrast */
+    text-align: center;
+    padding-left: 30px;  /* Add extra padding to the left for text inside */
+    padding-right: 30px; /* Add extra padding to the right for text inside */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding-bottom: 0;
+    background-color: #d9593a; /* Subtle white background */
+    font-family: 'Roboto', sans-serif; /* Set the font to Roboto for the whole body */
+
+
+}
+@media (max-width: 768px) {
+    h4 {
+        font-size: 2rem; /* Smaller font size on smaller screens */
+    }
+}
+.carousel-indicators button {
+    transition: background-color 0.3s ease;
+}
+
+#tableCarousel {
+    position: relative;
+    overflow: hidden;
+    height: auto; /* Set based on content, make sure the carousel fits */
+}
+
+.carousel-inner {
+    display: flex;  /* Flexbox ensures carousel items are treated as slides */
+    flex-direction: column; /* Stack carousel items vertically */
+    width: 100%;
+}
+
+.carousel-item {
+    visibility: hidden; /* Prevent the item from being rendered */
+    opacity: 0;  /* Make sure it's invisible */
+    transition: opacity 0.5s ease-in-out;  /* Smooth transition for visibility */
+}
+
+/* Show the active carousel item */
+.carousel-item.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.carousel-inner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+
+.carousel-item table {
+    width: 80%;  /* Ensure table takes full available width */
+    margin: 0 auto;  /* Center the table */
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.carousel-control-prev, .carousel-control-next {
+    background-color: #d9593a;  /* Custom color for control buttons */
+}
+
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    background-color: #f7f7f4;  /* Control button icon color */
+}
+/* Carousel Item */
+.carousel-item {
+    width: 80%;
+    display: flex;
+    justify-content: center;  /* Center the content horizontally */
+    align-items: center;     /* Center the content vertically */
+    text-align: center;  /* Center the text */
+    padding: 20px;
+    height: 100%;  /* Ensure carousel items take full height of the parent container */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Make the table content scrollable */
+.carousel-item .carousel-table-content {
+    width: 80%; /* Full width */
+    height: 80vh; /* Set a fixed height for the table container (adjust as needed) */
+    overflow-y: auto; /* Make the table scrollable */
+    margin-bottom: 0px; /* Give space for the dots below */
+    justify-content: center;  /* Center the content horizontally */
+    align-items: center;     /* Center the content vertically */
+    text-align: center;      /* Center the text */
+
+}
+
+/* Ensure that the carousel control buttons and dots stay at the bottom */
+#tableCarousel {
+    position: relative;
+    min-height: 85vh; /* Ensure the carousel has enough height to fit the content and keep the dots visible */
+    display: flex;
+    flex-direction: column;
+}
+
+.carousel-inner {
+    flex: 1; /* Ensure the inner part of the carousel stretches to take available space */
+    display: flex;
+    justify-content: flex-start;  /* Align carousel items to the top */
+                }
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 0; /* Position the dots at the very bottom of the carousel */
+    width: 100%;
+    z-index: 10; /* Ensure dots are on top of the content */
+    display: flex;
+    justify-content: center; /* Center the dots */
+}
+
+/* Optional: Ensure the control buttons (prev/next) are aligned with the content */
+.carousel-control-prev,
+.carousel-control-next {
+    background-color: #d9593a;
+    z-index: 1000; /* Ensure they are on top of the content */
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #f7f7f4; /* Control button icon color */
+}
+
+/* Optional: Style the table inside the carousel */
+.carousel-item table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.carousel-item th, .carousel-item td {
+    padding: 12px 15px;
+    text-align: center;
+}
+
+.carousel-item th {
+    background-color: #d9593a;
+    color: #f7f7f4;
+    font-weight: bold;
+}
+
+.carousel-item td {
+    background-color: #d9593a;
+    color: #f7f7f4;
+}
+
+.carousel-item tr:hover {
+    background-color: #62B4BB;
+    color: #fff;
+}
+
+.carousel-caption {
+    color: #f7f7f4;
+}
+
+
+.carousel-indicators button {
+    background-color: #f7f7f4;  /* Dot color */
+    border: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.carousel-indicators .active {
+    background-color: #62B4BB;  /* Active dot color */
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tables</title>
+    <!-- Bootstrap CSS (from CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons CSS (from CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: 'Roboto', sans-serif; /* Set the font to Roboto for the whole body */
+            background-color: #d9593a; /* Set the background to the specified orange */
+            overflow-x: hidden;  /* Prevent horizontal overflow */
+        }
+        
+        
+        
+        /* Navbar */
+        .navbar {
+            background-color: #62B4BB;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 1050;
+        }
+
+        /* Carousel Container */
+        #tableCarousel {
+            width: 100%;
+            background-color: #d9593a; 
+            overflow: hidden; 
+            position: relative;
+            min-height: 85vh; /* Minimum height for the carousel */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for a better effect */
+            z-index: 100;  /* Ensure carousel stays on top */
+            padding: 20px 0;  /* Padding to give space around the content */
+        }
+        
+        .carousel-inner {
+            display: flex;
+            flex-direction: column; /* Stack carousel items vertically */
+            justify-content: flex-start; /* Align carousel items at the top */
+            width: 100%;
+            height: 80vh; /* Take at least 80% of the vertical height */
+        }
+                
+        .carousel-item {
+            width: 100%;
+            display: flex;
+            justify-content: center;  /* Center the content horizontally */
+            align-items: flex-start;  /* Align content at the top */
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .carousel-table-content {
+            width: 80%; /* Set the width of the table container */
+            max-height: 100%; /* Ensure the table content fits within the container */
+            overflow-y: auto; /* Enable vertical scrolling if needed */
+            margin: 0 auto;
+        }
+        
+                
+        .carousel-item table {
+            width: 100%;  /* Ensure table takes full available width */
+            margin: 0 auto;  /* Center the table horizontally */
+            border-collapse: collapse; /* Remove extra space between cells */
+            color:  #f7f7f4;
+        }
+        
+
+        /* Make Table Header Sticky */
+        .carousel-item th,
+        .carousel-item td  {
+            background-color: #d9593a;
+            color: #f7f7f4;
+            font-weight: bold;
+            position: sticky;
+            border-right: none; /* Remove vertical borders */
+            padding: 12px 15px;
+            top: 0; 
+        }
+
+        .carousel-item th {
+            background-color: #d9593a;
+            font-weight: bold;
+            position: sticky;
+            color: #f7f7f4;
+            top: 0; 
+            z-index: 10;
+        }
+
+        /* Remove vertical lines in the table */
+        .carousel-item td, .carousel-item th {
+            border-right: none;
+        }
+        
+        /* Hover Effect for Table Rows */
+        .carousel-item tr:hover {
+            background-color: #62B4BB;
+            color:  #f7f7f4;
+
+        }
+
+
+        /* Carousel Control Buttons (Arrows) */
+        .carousel-control-prev,
+        .carousel-control-next {
+            background-color: #d9593a; 
+            z-index: 1000; 
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: #f7f7f4; /* Color of the arrow icons */
+        }
+
+        .carousel-control-prev {
+            left: 10px;  /* Move the left arrow to the edge */
+        }
+
+        .carousel-control-next {
+            right: 10px;  /* Move the right arrow to the edge */
+        }
+
+        /* Hide carousel items when they are not active */
+        .carousel-item {
+            visibility: hidden; /* Prevent the item from being rendered */
+            opacity: 0;  /* Make sure it's invisible */
+            transition: opacity 0.5s ease-in-out;  /* Smooth transition for visibility */
+        }
+
+        /* Show the active carousel item */
+        .carousel-item.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Carousel Dots */
+        .carousel-indicators {
+            position: absolute;
+            bottom: 10px; /* Space between the dots and the bottom */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .carousel-indicators button {
+            background-color: #f7f7f4;  /* Default dot color */
+            border: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .carousel-indicators .active {
+            background-color: #62B4BB;  /* Active dot color */
+        }
+
+        .carousel-indicators button:hover {
+            background-color: #EF9684; /* Hover color for dots */
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .carousel-item table {
+                width: 95%;  /* Slightly reduce the width of the table on smaller screens */
+            }
+        
+            .carousel-table-content {
+                width: 95%; /* Adjust table container width for smaller screens */
+            }
+        }
+
+        .navbar-toggler-icon {
+            background-image: none;
+            display: grid;
+            grid-template-columns: repeat(3, 7px); /* 3 columns, each 5px */
+            grid-template-rows: repeat(3, 7px);    /* 3 rows, each 5px */
+            gap: 1px;                               /* Small gap between squares */
+            width: 22px;                            /* Overall width of the waffle icon */
+            height: 22px;                           /* Overall height of the waffle icon */
+            justify-content: center;                /* Center grid horizontally */
+            align-items: center;                    /* Center grid vertically */
+        }
+
+        /* Individual waffle squares (bars) */
+        .navbar-toggler-icon span {
+            display: block;
+            background-color: #f7f7f4; /* Waffle square color */
+            border-radius: 0px; 
+            border-color:  #f7f7f4; /* Slightly rounded corners */
+        }
+
+        /* Square size adjustments */
+        .navbar-toggler-icon span {
+            height: 6px; /* Height of each square */
+            width: 6px;  /* Width of each square */
+        }
+
+        /* Toggle button appearance */
+        .navbar-toggler {
+            padding: 0; /* Remove default padding */
+            border: none; /* Remove border */
+            display: flex; /* Use flexbox to center the icon */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            width: 30px; /* Total width of the button */
+            height: 30px; /* Total height of the button */
+            background-color: transparent; /* Transparent background */
+            position: relative; /* Allow positioning */
+            top: 0px; /* Shift button down slightly */
+            left: 0px; /* Shift button left slightly */
+        }
+
+        /* Adjust the appearance when the hamburger is clicked */
+        .navbar-toggler-icon.collapsed span:nth-child(1) {
+            transform: translate(8px, 8px) rotate(45deg); /* Move and rotate the first square */
+        }
+
+        .navbar-toggler-icon.collapsed span:nth-child(3) {
+            transform: translate(-8px, 8px) rotate(-45deg); /* Move and rotate the third square */
+        }
+
+        .navbar-toggler-icon.collapsed span:nth-child(5),
+        .navbar-toggler-icon.collapsed span:nth-child(7) {
+            opacity: 0; /* Hide the second and fourth squares */
+        }
+
+                
+
+        </style>
+                        
+
+</head>
+<body style="background-color: #d9593a;">
+
+    <!-- Navbar -->
+
+        <!-- Navbar -->
+        <nav class="navbar navbar-light" style="background-color:#d9593a; padding-top: 1px; padding-bottom: 1px;">
+            <div class="container-fluid">
+                <!-- Brand or Logo -->
+                <a class="navbar-brand" href="#" style="padding-top: 0px; padding-bottom: 5px;">
+                </a>
+        
+                <!-- Toggle Button for Mobile and Desktop View (always visible) -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon">
+                        <!-- 9 Squares for Waffle Icon -->
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                </button>
+                
+                <!-- Navbar Links (Hidden by default, shown on toggle) -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Query Menu Link -->
+                        <!-- Query Menu Link -->
+                        <li class="nav-item">
+                            <a class="nav-link" a href="{{ url_for('home') }}">
+                                <i class="bi bi-house-door"></i> Home
+                            </a>
+                        </li>
+    
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('features') }}">
+                                <i class="bi bi-search"></i> Query Menu
+                            </a>
+                        </li>
+                        <!-- Tables Link -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('tables') }}">
+                                <i class="bi bi-table"></i> Tables
+                            </a>
+                        </li>
+                        <!-- About Link -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#about">
+                                <i class="bi bi-info-circle"></i> About
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('add_data') }}">
+                                <i class="bi bi-file-earmark-plus"></i> Add Data
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+<!-- Display for Each Table in Carousel -->
+<section id="tables" class="container my-5">
+    <div class="container mt-5">
+        <div id="tableCarousel" class="carousel slide" data-bs-ride="false">
+            <!-- Carousel indicators -->
+            <div class="carousel-indicators">
+                {% for table_name, results in table_data.items() %}
+                    <button type="button" data-bs-target="#tableCarousel" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ loop.index0 }}"></button>
+                {% endfor %}
+            </div>
+
+            <!-- Carousel inner: Contains all the items -->
+            <div class="carousel-inner">
+                {% for table_name, results in table_data.items() %}
+                    <!-- Each table goes inside a carousel item -->
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <div class="carousel-table-content">
+                            <h4 class="text-center">{{ table_name }}</h4>
+                            {% if results %}
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            {% for column, value in results[0].items() %}
+                                                <th>{{ column }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in results %}
+                                            <tr>
+                                                {% for column, value in row.items() %}
+                                                    <td>{{ value }}</td>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>No data available for {{ table_name }}.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Carousel controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#tableCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#tableCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+</body>
+
+
+
+
+
+
+
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// Fetch the table data based on table name and update the carousel item
+// Fetch the table data based on table name and update the carousel item
+function fetchTableData(tableName, carouselItem) {
+    // Only fetch if the table has not been rendered yet
+    if (carouselItem.querySelector('table')) return;
+
+    fetch(`/get_table_columns/${tableName}`)
+        .then(response => response.json())
+        .then(columns => {
+            // Dynamically generate the table header and rows here
+            let tableHtml = `
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            ${columns.map(col => `<th>${col}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table data rows will go here -->
+                    </tbody>
+                </table>
+            `;
+            // Insert the generated table HTML into the carousel item
+            carouselItem.querySelector('.carousel-table-content').innerHTML = tableHtml;
+
+            // Now we can load the table rows (fetch rows if needed)
+            // You can use additional API calls to fetch rows based on the table
+            // For example: fetchTableRows(tableName, carouselItem);
+        })
+        .catch(error => {
+            console.error('Error fetching table columns:', error);
+            carouselItem.querySelector('.carousel-table-content').innerHTML = '<p>Error loading table data.</p>';
+        });
+}
+
+// Event listener for when the carousel item has finished sliding
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize the carousel
+    const carousel = new bootstrap.Carousel('#tableCarousel');
+    
+    // Event listener for when a carousel item has changed
+    $('#tableCarousel').on('slid.bs.carousel', function (e) {
+        const activeItem = e.relatedTarget; // Get the active carousel item
+        const tableName = activeItem.querySelector('h4').textContent; // Get the table name from the heading
+        
+        // Only fetch the table data if it has not been loaded yet
+        if (!activeItem.querySelector('table')) {
+            fetchTableData(tableName, activeItem);
+        }
+    });
+
+    // Optionally, load the first table immediately when the page loads
+    const firstCarouselItem = document.querySelector('.carousel-item.active');
+    const firstTableName = firstCarouselItem.querySelector('h4').textContent;
+    fetchTableData(firstTableName, firstCarouselItem);
+});
+
+// Load the tables into the carousel
+function loadTables() {
+    fetch('/get_tables')
+        .then(response => response.json())
+        .then(tables => {
+            const carouselInner = document.getElementById('carousel-inner');
+            const carouselIndicators = document.getElementById('carousel-indicators');
+
+            // Clear previous items
+            carouselInner.innerHTML = '';
+            carouselIndicators.innerHTML = '';
+
+            tables.forEach((table, index) => {
+                // Create carousel indicators
+                const indicator = document.createElement('button');
+                indicator.setAttribute('type', 'button');
+                indicator.setAttribute('data-bs-target', '#tableCarousel');
+                indicator.setAttribute('data-bs-slide-to', index);
+                if (index === 0) indicator.classList.add('active');  // First item is active
+                indicator.setAttribute('aria-current', index === 0 ? 'true' : 'false');
+                indicator.setAttribute('aria-label', `Slide ${index}`);
+                carouselIndicators.appendChild(indicator);
+
+                // Create carousel item for each table
+                const carouselItem = document.createElement('div');
+                carouselItem.classList.add('carousel-item');
+                if (index === 0) carouselItem.classList.add('active');  // First item is active
+
+                // Add table content to the carousel item
+                carouselItem.innerHTML = `
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>${table}</h5>
+                        <p>View data from the ${table} table</p>
+                        <div class="carousel-table-content">
+                            <p>Loading table data...</p> <!-- Placeholder text while loading -->
+                        </div>
+                    </div>
+                `;
+                carouselInner.appendChild(carouselItem);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading tables:', error);
+        });
+}
+
+// Set up the event listener for when the carousel item changes
+document.addEventListener('DOMContentLoaded', function () {
+    loadTables(); // Load the tables initially
+
+    // Initialize the carousel
+    const carousel = new bootstrap.Carousel('#tableCarousel');
+    
+    // Event listener for when a carousel item becomes active
+    $('#tableCarousel').on('slid.bs.carousel', function (e) {
+        const activeItem = e.relatedTarget; // Get the active carousel item
+        const tableName = activeItem.querySelector('h5').textContent; // Get the table name from the caption
+        
+        // Only fetch the table data if it has not been loaded yet
+        if (!activeItem.querySelector('table')) {
+            fetchTableData(tableName, activeItem);
+        }
+    });
+
+    // Optionally, load the first table immediately when the page loads
+    const firstCarouselItem = document.querySelector('.carousel-item.active');
+    const firstTableName = firstCarouselItem.querySelector('h5').textContent;
+    fetchTableData(firstTableName, firstCarouselItem);
+});
+</script>
+</body>
+</html>
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tables</title>
+    <!-- Bootstrap CSS (from CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons CSS (from CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;  /* Include padding and border in the total width/height */
+        }
+
+        
+    
+        .btn-primary {
+            background-color: #dc5f3f; /* Custom color for primary button */
+            border: none;
+        }
+    
+        .btn-primary:hover {
+            background-color: #c65639; /* Darker shade on hover */
+        }
+        
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;  /* Ensure the body occupies full width */
+            overflow-x: hidden;  /* Prevent horizontal overflow */
+        
+        }
+
+
+
+  
+
+        
+        .navbar {
+            background-color: #f7f7f4; /* Navbar background color */  /* Ensure no top padding in the navbar */
+            padding-bottom: 1px; /* Remove bottom padding of navbar */
+            padding-top: 0px !important;
+            margin-bottom: 0px;
+        }
+
+        /* Set the text and icon color to #f7f7f4 */
+        .navbar .navbar-brand, 
+        .navbar .nav-link, 
+        .navbar-toggler-icon,
+        .navbar .nav-item i {
+            color:  #f7f7f4 !important; /* Override text and icon color */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f4;
+        }
+    
+       
+    
+        /* Navbar */
+        .navbar {
+            background-color: #62B4BB;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            margin-bottom: 0; /* Ensure no bottom margin */
+            position: relative;  /* Ensure it is positioned correctly */
+            z-index: 1050; 
+
+        }
+    
+        .navbar-toggler-icon span {
+            background-color: #333; /* Dark color for the hamburger menu */
+        }
+    
+        /* Optional Styling for Tables Section */
+        .container.my-5 {
+            padding-top: 0px;
+            margin-top:0px;
+        }
+    
+        /* Additional Styling for Table Content */
+        .table {
+            overflow: hidden;
+            margin-top: 0px;
+        }
+    
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: #62B4BB;
+        }
+    
+        /* Styling for Go Back and Add Entry Buttons */
+        .btn {
+            margin-top: 10px;
+        }
+    
+        .navbar-toggler-icon {
+            background-image: none;
+            display: grid;
+            grid-template-columns: repeat(3, 7px); /* 3 columns, each 5px */
+            grid-template-rows: repeat(3, 7px);    /* 3 rows, each 5px */
+            gap: 1px;                               /* Small gap between squares */
+            width: 22px;                            /* Overall width of the waffle icon */
+            height: 22px;                           /* Overall height of the waffle icon */
+            justify-content: center;                /* Center grid horizontally */
+            align-items: center;                    /* Center grid vertically */
+        }
+
+        /* Individual waffle squares (bars) */
+        .navbar-toggler-icon span {
+            display: block;
+            background-color: #f7f7f4; /* Waffle square color */
+            border-radius: 0px;         /* Slightly rounded corners */
+            border-color:  #62B4BB;
+            z-index: 1060;  /* Ensures the icon stays above the carousel */
+
+        }
+
+        /* Square size adjustments */
+        .navbar-toggler-icon span {
+            height: 6px; /* Height of each square */
+            width: 6px;  /* Width of each square */
+        }
+
+        /* Toggle button appearance */
+        .navbar-toggler {
+            padding: 0; /* Remove default padding */
+            border: none; /* Remove border */
+            display: flex; /* Use flexbox to center the icon */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            width: 30px; /* Total width of the button */
+            height: 30px; /* Total height of the button */
+            background-color: transparent; /* Transparent background */
+            position: relative; /* Allow positioning */
+            top: 5px; /* Shift button down slightly */
+            left: -5px; /* Shift button left slightly */
+        }
+
+        /* Adjust the appearance when the hamburger is clicked */
+        .navbar-toggler-icon.collapsed span:nth-child(1) {
+            transform: translate(8px, 8px) rotate(45deg); /* Move and rotate the first square */
+        }
+
+        .navbar-toggler-icon.collapsed span:nth-child(3) {
+            transform: translate(-8px, 8px) rotate(-45deg); /* Move and rotate the third square */
+        }
+
+        .navbar-toggler-icon.collapsed span:nth-child(5),
+        .navbar-toggler-icon.collapsed span:nth-child(7),
+        .navbar-toggler-icon.collapsed span:nth-child(9) {
+            opacity: 0; /* Hide the other squares when collapsed */
+        }
+
+        /* Hover effect for waffle squares */
+        .navbar-toggler-icon:hover span {
+            background-color: #f7f7f4; /* Change color on hover */
+        }
+
+        /* Hover effect for the toggle button */
+        .navbar-toggler:hover {
+            background-color:  #62B4BB; /* Button background change on hover */
+        }
+        /* Feature Card Container - Grid Layout */
+
+    .navbar .navbar-brand,
+        .navbar .nav-link,
+        .navbar-toggler-icon span {
+            color: #f7f7f4; !important; /* Text and icon color to white */
+        }
+
+    
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Roboto, sans-serif;
+            background-color: #f7f7f4;
+        }
+        
+    
+        /* Carousel Container */
+        #tableCarousel {
+            width: 100vw; /* Full viewport width */
+            background-color: #d9593a; /* Match with the navbar background color */
+            overflow: hidden; /* Ensure no overflow outside rounded corners */
+            position: relative;
+            margin-top: 0 px ; /* Ensure it sticks directly under the navbar */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for a better effect */
+            margin-top: 0px;  /* Adjust this value to create more space */
+            z-index: 100;  /* Ensure it stays above other elements */
+
+        
+
+                }
+    
+        /* Carousel Item */
+        .carousel-inner {
+            width: 100%;
+            color:#f7f7f4;
+            padding-top: 30px;  /* Adjust the space between the top of the carousel and the items */
+            margin: 0px
+        }
+    
+        .carousel-item {
+            width: 100%;
+            display: flex;
+            justify-content: center; /* Center the content horizontally */
+            align-items: center;     /* Center the content vertically */
+            padding: 20px;  /* Padding for table content */
+
+        }
+        .carousel-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px; /* Add padding around the carousel item */
+            text-align: center; /* Center the text */
+            padding-top: 0 px;
+        }
+        
+        .carousel-table-content {
+            width: 80%; /* Limit the width of the table content */
+            margin: 0 auto; 
+        }
+        
+
+        .carousel-item table {
+            width: 100%; /* Set table width to 100% of the content area */
+            margin: 0 auto; /* Center the table horizontally */
+            border-collapse: collapse; /* Remove any extra space between cells */
+        }
+                /* Table Header and Table Cells */
+
+        .carousel-item th, .carousel-item td {
+            text-align: center; /* Center text horizontally */
+            padding: 12px 15px; /* Add some padding for better spacing */
+        }
+
+        /* Remove vertical borders */
+        .carousel-item th, .carousel-item td {
+            border-left: none;
+            border-right: none;
+        }
+
+        /* Optional: Add a border at the bottom of the rows (horizontal borders) */
+        .carousel-item th, .carousel-item td {
+            border-bottom: 1px solid #ddd; /* Add a subtle bottom border for clarity */
+        }
+
+        /* Optional: Style the table header */
+        .carousel-item th {
+            background-color: #d9593a; /* Add a background color to the header */
+            color: #f7f7f4; /* Text color of the header */
+            font-weight: bold; /* Make header text bold */
+        }
+    
+        .carousel-caption {
+            color: #f7f7f4;
+        }
+    
+        /* Make Carousel full height to fill screen */
+        #tableCarousel {
+            min-height: 85vh; /* This can be adjusted based on how much space you want to give to the carousel */
+        }
+    
+
+        .carousel-item {
+            display: none;
+        }
+        
+        .carousel-item.active {
+            display: block;
+        }
+        
+
+        /* Optional Styling for Tables Section */
+        .container.my-5 {
+            padding-top: 0px;
+            margin-top:0px;
+
+        }
+        section#tables {
+            margin-top: 0; /* Remove top margin */
+            padding-top: 0; /* Remove top padding */
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+        
+        .table th {
+            text-transform: uppercase;
+
+        }
+        .table, .table th, .table td {
+            color: #f7f7f4; /* Set text color */
+            font-family: 'Roboto', sans-serif; /* Set the font to Roboto for the whole body */
+
+
+        }
+        /* Additional Styling for Table Content */
+        .table {
+            overflow: hidden;
+            margin-top: 0px;
+            margin-bottom: 0 px;
+            padding-bottom: 10px
+        }
+        
+        .table th {
+            color: #f7f7f4; /* Ensure header text is also the same color */
+        }
+        #tables {
+            padding-top: 0px;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #62B4BB; /* A nice hover effect to highlight rows */
+            color: #f7f7f4; /* Ensure the text color remains the same on hover */
+        }
+        .carousel-inner img {
+            border-radius: 0 0 30px 30px;
+        }
+        
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: #d9593a;
+        }
+    
+        /* Styling for Go Back and Add Entry Buttons */
+        .btn {
+            margin-top: 10px;
+        }
+        section {
+            padding-top: 0;
+            margin-top:0px;
+            margin-bottom: 0px;
+            padding-bottom: 0px;
+
+        }
+        #text-center {
+            color:#f7f7f4;
+        }
+        body {
+            margin: 0; /* Remove all body margin */
+            padding: 0; /* Remove any padding from the body */
+        }
+        
+        .container, .container-fluid {
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+            padding-top: 0 !important;  /* Force padding to 0 */
+            margin-top: 0 !important; 
+            padding-bottom: 0 !important;  /* Force padding to 0 */
+            margin-bottom: 0 !important; 
+        }
+        
+        .container.my-5, #tables, .carousel-item {
+            padding-top: 0px;
+            margin-top: 0px;
+            
+        }
+        
+        .navbar-nav {
+            margin-left: auto !important; /* Override any other margin properties */
+        }
+        
+        /* Ensure no padding in the navbar */
+        .navbar-collapse {
+            padding: 0 !important; /* Reset any unwanted padding */
+        }
+        
+        /* Optional: Align the waffle icon (navbar-toggler) */
+        .navbar-toggler {
+            margin-left: auto !important; /* Align the hamburger icon (waffle) to the right */
+        }
+        
+        
+        .carousel-indicators button {
+            padding-top: 10px;
+            margin-top: 0px;
+            margin-bottom: -17px; 
+            background-color: #f7f7f4; /* Dot color */
+            border: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        
+        .carousel-indicators .active {
+            background-color: #62B4BB; /* Active dot color */
+        }
+        
+        .carousel-indicators button:hover {
+            background-color: #EF9684; /* Hover color */
+        }
+        
+        h4 {
+            font-size: 2.5rem;  /* Larger font size for impact */
+            font-weight: 700;
+            color: #f7f7f4;  /* Darker color for good contrast */
+            text-align: center;
+            padding-left: 30px;  /* Add extra padding to the left for text inside */
+            padding-right: 30px; /* Add extra padding to the right for text inside */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding-bottom: 0;
+            background-color: #d9593a; /* Subtle white background */
+            font-family: 'Roboto', sans-serif; /* Set the font to Roboto for the whole body */
+
+
+        }
+        @media (max-width: 768px) {
+            h4 {
+                font-size: 2rem; /* Smaller font size on smaller screens */
+            }
+        }
+        .carousel-indicators button {
+            transition: background-color 0.3s ease;
+        }
+
+        #tableCarousel {
+            position: relative;
+            overflow: hidden;
+            height: auto; /* Set based on content, make sure the carousel fits */
+        }
+        
+        .carousel-inner {
+            display: flex;  /* Flexbox ensures carousel items are treated as slides */
+            flex-direction: column; /* Stack carousel items vertically */
+            width: 100%;
+        }
+        
+        .carousel-item {
+            display: block;  /* Make sure each item is block-level */
+            width: 100%;
+            text-align: center;
+        }
+        
+        .carousel-item table {
+            width: 100%;  /* Ensure table takes full available width */
+            margin: 0 auto;  /* Center the table */
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .carousel-control-prev, .carousel-control-next {
+            background-color: #d9593a;  /* Custom color for control buttons */
+        }
+        
+        .carousel-control-prev-icon, .carousel-control-next-icon {
+            background-color: #f7f7f4;  /* Control button icon color */
+        }
+        
+        .carousel-indicators button {
+            background-color: #f7f7f4;  /* Dot color */
+            border: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .carousel-indicators .active {
+            background-color: #62B4BB;  /* Active dot color */
+        }
+        
+        
+        
+        .carousel-inner {
+            padding-bottom: 50px;  /* Add more space between table and bottom buttons */
+        }
+        
+        .carousel-item table {
+            margin-bottom: 20px;  /* Add space at the bottom of the table */
+        }
+        
+        
+
+        </style>
+                        
+
+</head>
+<body style="background-color: #d9593a;">
+
+    <!-- Navbar -->
+
+        <!-- Navbar -->
+        <nav class="navbar navbar-light" style="background-color: #d9593a; padding-top: 1px; padding-bottom: 1px;">
+            <div class="container-fluid">
+                <!-- Brand or Logo -->
+                <a class="navbar-brand" href="#" style="padding-top: 0px; padding-bottom: 0px;">
+                    <!-- Logo or Brand here -->
+                </a>
+            
+                <!-- Toggle Button for Mobile and Desktop View -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon">
+                        <!-- 9 Squares for Waffle Icon -->
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                </button>
+                
+                <!-- Navbar Links (Hidden by default, shown on toggle) -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Navbar items here -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('home') }}">
+                                <i class="bi bi-house-door"></i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('features') }}">
+                                <i class="bi bi-search"></i> Query Menu
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('tables') }}">
+                                <i class="bi bi-table"></i> Tables
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#about">
+                                <i class="bi bi-info-circle"></i> About
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('add_data') }}">
+                                <i class="bi bi-file-earmark-plus"></i> Add Data
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+                                                 
+
+<!-- Display for Each Table in Carousel -->
+<section id="tables" class="container my-5">
+    <div class="container mt-5">
+        <div id="tableCarousel" class="carousel slide" data-bs-ride="false">
+            <!-- Carousel indicators -->
+            <div class="carousel-indicators">
+                {% for table_name, results in table_data.items() %}
+                    <button type="button" data-bs-target="#tableCarousel" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ loop.index0 }}"></button>
+                {% endfor %}
+            </div>
+
+            <!-- Carousel inner: Contains all the items -->
+            <div class="carousel-inner">
+                {% for table_name, results in table_data.items() %}
+                    <!-- Each table goes inside a carousel item -->
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <div class="carousel-table-content">
+                            <h4 class="text-center">{{ table_name }}</h4>
+                            {% if results %}
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            {% for column, value in results[0].items() %}
+                                                <th>{{ column }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in results %}
+                                            <tr>
+                                                {% for column, value in row.items() %}
+                                                    <td>{{ value }}</td>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>No data available for {{ table_name }}.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Carousel controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#tableCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#tableCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+</body>
+
+
+
+
+
+
+
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    function fetchTableData(tableName) {
+        fetch(`/get_table_columns/${tableName}`)
+            .then(response => response.json())
+            .then(columns => {
+                // Dynamically generate the table header and rows here
+                const tableContainer = document.getElementById('tableDataContainer');
+                let tableHtml = `
+                    <div class="jumbotron" style="background-color: #62B4BB; padding: 0px;">
+                        <h2 class="text-white">${tableName}</h2>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    ${columns.map(col => `<th>${col}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Table data rows will go here -->
+                            </tbody>
+                        </table>
+                        <button class="btn btn-secondary" onclick="window.history.back()">Go Back</button>
+                        <a href="/add_entry/${tableName}" class="btn btn-primary">Add Entry</a>
+                    </div>
+                `;
+                tableContainer.innerHTML = tableHtml;
+            })
+            .catch(error => {
+                console.error('Error fetching table columns:', error);
+            });
+    }
+    
+    function loadTables() {
+        fetch('/get_tables')
+            .then(response => response.json())
+            .then(tables => {
+                // Populate the dropdown
+                const dropdown = document.getElementById('tableSelect');
+                if (dropdown) {
+                    tables.forEach(table => {
+                        const option = document.createElement('option');
+                        option.value = table;
+                        option.textContent = table;
+                        dropdown.appendChild(option);
+                    });
+                }
+    
+                // Populate the carousel with tables
+                const carouselInner = document.getElementById('carousel-inner');
+                const carouselIndicators = document.getElementById('carousel-indicators');
+    
+                if (carouselInner && carouselIndicators) {
+                    // Ensure the carousel items and indicators are reset before populating
+                    carouselInner.innerHTML = '';
+                    carouselIndicators.innerHTML = '';
+    
+                    tables.slice(0, 4).forEach((table, index) => {
+                        // Create carousel indicators
+                        const indicator = document.createElement('button');
+                        indicator.setAttribute('type', 'button');
+                        indicator.setAttribute('data-bs-target', '#tableCarousel');
+                        indicator.setAttribute('data-bs-slide-to', index);
+                        if (index === 0) indicator.classList.add('active');  // First item is active
+                        indicator.setAttribute('aria-current', index === 0 ? 'true' : 'false');
+                        indicator.setAttribute('aria-label', `Slide ${index}`);
+                        carouselIndicators.appendChild(indicator);
+    
+                        // Create carousel items (each table)
+                        const carouselItem = document.createElement('div');
+                        carouselItem.classList.add('carousel-item');
+                        if (index === 0) carouselItem.classList.add('active');  // First item is active
+    
+                        // Add table content to the carousel item
+                        carouselItem.innerHTML = `
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>${table}</h5>
+                                <p>View data from the ${table} table</p>
+                                <!-- You can dynamically fetch and insert the table data here if needed -->
+                            </div>
+                        `;
+    
+                        // Append the carousel item to the carousel inner container
+                        carouselInner.appendChild(carouselItem);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading tables:', error);
+            });
+    }
+    
+
+
+    // Ensure the DOM is loaded before calling loadTables
+    document.addEventListener('DOMContentLoaded', function () {
+        loadTables();
+    });
+</script>
+</body>
+</html>
