@@ -461,7 +461,8 @@ def add_entry(table_name):
                 existing_entry = execute_query(f"SELECT * FROM {table_name} WHERE {primary_key_column} = %s", (primary_key_value,))
                 print(f"Existing entry check result: {existing_entry}")  
                 if existing_entry:
-                    error_message = f"Error: {primary_key_column} = {primary_key_value} already exists in the {table_name} table. Please use a unique value."
+                    suggested_sku = get_next_available_sku()
+                    error_message = f"Error: {primary_key_column} = {primary_key_value} already exists in the {table_name} table. Please use a unique value. Suggested SKU: {suggested_sku}."
                     print(f"Error Message: {error_message}")
                     return render_template('add_entry_form.html', 
                                            table_name=table_name, 
