@@ -280,6 +280,49 @@ def fetch_table_data():
             table_data[table_name] = result
     return table_data
 
+def check_sku_in_skudb(sku_value):
+    # Query the SKUs table to check if the SKU exists
+    query = "SELECT 1 FROM SKUs WHERE SKU = %s"
+    result = execute_query(query, (sku_value,))
+    # If the result is not empty, SKU exists
+    return len(result) > 0
+
+def get_next_available_sku():
+    """
+    This function checks the SKUs in the database and returns the first available
+    SKU number that is 125 or greater and does not already exist.
+    """
+    # Query to get all existing SKUs greater than or equal to 125
+    query = "SELECT SKU FROM SKUs WHERE SKU >= 125"
+    result = execute_query(query)
+    
+    # Print the result to understand its structure (for debugging)
+    print(f"Query result: {result}")  # Debugging: Check what result is
+
+    # Check if result is empty and return 125 if no SKUs are found
+    if not result:
+        return 126
+
+    # If result is a list of dictionaries, use the correct key to extract SKUs
+    if isinstance(result, list) and isinstance(result[0], dict):
+        # Assuming the column name is 'SKU'
+        existing_skus = sorted(row['SKU'] for row in result)
+    else:
+        # If result is a list of tuples, use row[0] for the SKU
+        existing_skus = sorted(row[0] for row in result)
+
+    # Now find the first available SKU greater than or equal to 125
+    sku_suggestion = 126
+
+    # Loop through the existing SKUs and find the first available gap
+    for sku in existing_skus:
+        if sku == sku_suggestion:
+            sku_suggestion += 1  # Move to the next SKU if the current one exists
+        else:
+            break  # As soon as we find a gap, break and return the missing SKU
+
+    return sku_suggestion
+
 def get_table_columns(table_name):
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -412,6 +455,8 @@ def add_entry(table_name):
             print(f"Checking for duplicate {primary_key_column}: {primary_key_value}")  
 
             if primary_key_value:
+                
+                
                 # Check if the primary key value already exists in the table
                 existing_entry = execute_query(f"SELECT * FROM {table_name} WHERE {primary_key_column} = %s", (primary_key_value,))
                 print(f"Existing entry check result: {existing_entry}")  
@@ -425,6 +470,47 @@ def add_entry(table_name):
                                            error_message=error_message,
                                            form_data=form_data,
                                            validation_rules=table_validation_rules)
+                    
+                            # Check if the primary key value contains "SKU"
+            # Check if SKU exists in the form data (e.g., SKU column name contains "SKU")
+            sku_column = next((col for col in form_data.keys() if 'SKU' in col), None)
+            if sku_column:
+                sku_value = form_data.get(sku_column)
+                price_value = form_data.get('Price')  # Assuming "Price" is a field in the form
+
+                # Check if SKU exists in the SKUs table
+                sku_exists = check_sku_in_skudb(sku_value)
+
+                if not sku_exists:
+                    # If SKU does not exist, insert into SKUs table first
+                    print(f"SKU {sku_value} not found. Inserting into SKUs table with price {price_value}.")
+                    try:
+                        sku_insert_query = "INSERT INTO SKUs (SKU, Price) VALUES (%s, %s)"
+                        execute_insert_query(sku_insert_query, (sku_value, price_value))
+                        print(f"SKU {sku_value} inserted into SKUs table.")
+                    except Exception as e:
+                        error_message = f"Error inserting SKU into SKUs table: {str(e)}"
+                        print(f"Error Message: {error_message}")
+                        return render_template('add_entry_form.html', 
+                                               table_name=table_name, 
+                                               table_columns=table_columns, 
+                                               table_data=table_data,
+                                               error_message=error_message,
+                                               form_data=form_data,
+                                               validation_rules=table_validation_rules)
+                else:
+                    # SKU exists in the SKUs table, so do not insert it again
+                    suggested_sku = get_next_available_sku()
+                    error_message = f"Error: SKU {sku_value} already exists in the SKUs table. Please use a unique SKU. Suggested SKU: {suggested_sku}."
+                    print(f"Error Message: {error_message}")
+                    return render_template('add_entry_form.html', 
+                                           table_name=table_name, 
+                                           table_columns=table_columns, 
+                                           table_data=table_data,
+                                           error_message=error_message,
+                                           form_data=form_data,
+                                           validation_rules=table_validation_rules)
+
         
         # Proceed with the insert if no duplicates
         columns = ', '.join(form_data.keys())
