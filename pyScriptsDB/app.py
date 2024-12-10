@@ -333,11 +333,10 @@ def get_table_data(table_name):
 @app.route('/add_data')
 def add_data():
     # Pass the table data to the template
-    table_data = get_all_tables()  # A function that fetches your table names and image URLs
+    table_data = get_all_tables()  
     return render_template('add_data.html', table_data=table_data)
 
 def get_all_tables():
-    # This function returns a dictionary of table names and associated image URLs
     return {
         'Baristas': {'image_url': 'static/cat_wash.jpg'},
         'Ingredients': {'image_url': 'static/cat_plant.jpg'},
@@ -350,7 +349,7 @@ def get_all_tables():
     
 @app.route('/add_entry/<table_name>', methods=['GET', 'POST'])
 def add_entry(table_name):
-    print(f"Attempting to add data to table: {table_name}")  # Debugging line
+    print(f"Attempting to add data to table: {table_name}") 
 
     validation_rules = {
         "Menu": {
@@ -392,7 +391,7 @@ def add_entry(table_name):
     # Retrieve the validation rules for the current table.
     table_validation_rules = validation_rules.get(table_name, {})
     
-    print(f"Validation rules for {table_name}: {table_validation_rules}")  # Debugging print
+    print(f"Validation rules for {table_name}: {table_validation_rules}") 
 
     # Get the columns for the table dynamically
     table_columns = get_table_columns(table_name)
@@ -400,7 +399,7 @@ def add_entry(table_name):
 
     if request.method == 'POST':
         form_data = request.form.to_dict()
-        print("Form Data:", form_data)  # Debugging line
+        print("Form Data:", form_data)  
 
         # Remove 'table_name' if it exists in form_data
         form_data.pop('table_name', None)
@@ -410,12 +409,12 @@ def add_entry(table_name):
         
         if primary_key_column:
             primary_key_value = form_data.get(primary_key_column)
-            print(f"Checking for duplicate {primary_key_column}: {primary_key_value}")  # Debug primary key
+            print(f"Checking for duplicate {primary_key_column}: {primary_key_value}")  
 
             if primary_key_value:
                 # Check if the primary key value already exists in the table
                 existing_entry = execute_query(f"SELECT * FROM {table_name} WHERE {primary_key_column} = %s", (primary_key_value,))
-                print(f"Existing entry check result: {existing_entry}")  # Debugging line
+                print(f"Existing entry check result: {existing_entry}")  
                 if existing_entry:
                     error_message = f"Error: {primary_key_column} = {primary_key_value} already exists in the {table_name} table. Please use a unique value."
                     print(f"Error Message: {error_message}")
@@ -429,12 +428,12 @@ def add_entry(table_name):
         
         # Proceed with the insert if no duplicates
         columns = ', '.join(form_data.keys())
-        placeholders = ', '.join(['%s'] * len(form_data))  # Use placeholders to avoid SQL injection
+        placeholders = ', '.join(['%s'] * len(form_data))  
         query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
         
         # Convert form data to a tuple of values
         values = tuple(form_data[column] for column in form_data)
-        print(f"Executing query: {query} with values: {values}")  # Debugging line
+        print(f"Executing query: {query} with values: {values}")  
         
         try:
             result = execute_insert_query(query, values)
@@ -512,7 +511,7 @@ def get_primary_key_column(table_name):
     # If primary key is found, return the column name (first column in the result)
     if result:
         print(result)
-        primary_key_column = result[0][4]  # 4th index is the column name
+        primary_key_column = result[0][4]  
         return primary_key_column
     return None  # If no primary key is found
 
@@ -542,12 +541,11 @@ def get_tables():
     try:
         # Query to get the table names
         cursor.execute("SHOW TABLES")
-        tables = cursor.fetchall()  # This will return a list of tuples
+        tables = cursor.fetchall()  
 
-        # Extract table names from the tuples
         table_names = [table[0] for table in tables]
 
-        return jsonify(table_names)  # Return table names as JSON
+        return jsonify(table_names)  
     except mysql.connector.Error as err:
         return jsonify({"error": f"Database error: {err}"}), 500
     finally:
@@ -570,7 +568,7 @@ def run_table_query():
         'Recipes': 'query_recipes',
         'Drinks': 'query_drinks',
         'Sales_Item': 'query_sales_items',
-        'Pastries': 'query_pastries'  # Add Pastries query mapping here
+        'Pastries': 'query_pastries'  
 
     }
 
@@ -594,10 +592,9 @@ def run_query_post():
         result = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]  # Get column names
         
-        # Commit any changes (if query was an update/insert)
         conn.commit()
     except Exception as e:
-        result = str(e)  # Show error message if query fails
+        result = str(e)  
         columns = []
     finally:
         cursor.close()
