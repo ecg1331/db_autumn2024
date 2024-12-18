@@ -1,25 +1,31 @@
-1. **`pyscriptsTables/`**  
-   - Has the scripts for how I made each table. If they need edits eventually, you will have to change the links to the correct dirs.
+# Café and Bookstore Database Project
 
-2. **`menu/`**  
-   - Contains old CSV files of menus:
-     - **Food menu**: real data
-     - **Drink and Pastry menus**: Mix of real and fake data.
-     - Didn't use the wine and beer menus, but if anyone wants to clean those up we can.
+This repository contains the final project for our database design course. We created a relational database to simulate daily operations for a local café and bookstore, modeled after **Plein Air**.
 
-3. **`pyScriptsDB/`**  
-   - Contains the Python scripts for working with the database:
-   - (Run them in this order, as long as you connect to your db with your password, you shouldnt have to change anything)
-     1. **`dbSetup.py`**: Sets up the database and tables.
-     2. **`insertData.py`**: Inserts data into the tables.
-     3. **`Queries.py`**: Runs our queries.
-     4. **`dbTeardown.py`**: Cleans up the database (drops tables and the database).
-     5. 4. **`GUI.py`**: what ive done of the GUI. needs more complicated queries. Also if some could allow users to select attributes that would great
-     6. **`pyScriptsDB/tables`**:
-       - Contains the CSV files that populate the database (that were created in pyscriptsTables)
+## Project Description
+- **Goal**: Optimize workflows by designing a database that supports menu management, sales tracking, and customer loyalty programs.
+- **Implementation**:
+  - Designed an **ER diagram** to model entities like goods (menu items, pastries, drinks, books), baristas, sales, and customer loyalty.
+  - Populated tables with real and generated data sourced from:
+    - [Plein Air Café](http://www.pleinaircafe.co)
+    - [Kaggle Book Dataset](https://www.kaggle.com/datasets/middlelight)
+  - Developed a relational schema optimized for efficient querying, reducing unnecessary joins by denormalizing frequently accessed attributes.
 
-  - generated customer, barista and sales tables on 11/30.
- 
-  
+## Key Features
+- Tracks goods sold, including books, pastries, drinks, and menu items.
+- Records barista sales, customer loyalty participation, and daily transactions.
+- Supports discounts for paired items (e.g., fall beverages and pastries).
+
+## Implementation Highlights
+- **Tools**: MySQL for database implementation, Python for data cleaning and integration.
+
+## Contributors
+- **Emma Griffin**  
+- **Olivia Werba**
+
+---
+
+For more details, refer to our final presentation [here](https://github.com/ecg1331/db_autumn2024/blob/main/Final12_10_24.pdf)).
+
 
 
