@@ -19,13 +19,22 @@ This repository contains the final project for our database design course. We cr
 ## Implementation Highlights
 - **Tools**: MySQL for database implementation, Python for data cleaning and integration.
 
+## Repository Structure
+
+- **pyScriptsDB/**: Contains Python scripts for the setup and implementation of the Database including:
+    - **`dbSetup.py`**: Creates the database and tables via mysql.connector
+    - **`insertData.py`**: Script to populate tables with data via my sql.connector.
+    - **`dbTeardown.py`**: Deletes all tables and database via my sql.connector.
+    - **`app.py**: Flask application script that provides a user interface for interacting with the database
+- **pyScriptsTables/**: CContains Python scripts to generate files for all database tables using a combination of real and generated data
+
 ## Contributors
 - **Emma Griffin**  
 - **Olivia Werba**
 
 ---
 
-For more details, refer to our final presentation [here](https://github.com/ecg1331/db_autumn2024/blob/main/Final12_10_24.pdf)).
+For more details, refer to our final presentation [here](https://github.com/ecg1331/db_autumn2024/blob/main/Final12_10_24.pdf).
 
 
 
