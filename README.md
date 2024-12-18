@@ -25,7 +25,7 @@ This repository contains the final project for our database design course. We cr
     - **`dbSetup.py`**: Creates the database and tables via mysql.connector
     - **`insertData.py`**: Script to populate tables with data via my sql.connector.
     - **`dbTeardown.py`**: Deletes all tables and database via my sql.connector.
-    - **`app.py**: Flask application script that provides a user interface for interacting with the database
+    - **`app.py`**: Flask application script that provides a user interface for interacting with the database
 - **pyScriptsTables/**: CContains Python scripts to generate files for all database tables using a combination of real and generated data
 
 ## Contributors
